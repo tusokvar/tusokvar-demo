@@ -1,100 +1,84 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import './Home.css';
+import ChatWidget from '../components/ChatWidget';
 
-const Home = () => {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [date, setDate] = useState("");
-  const [coupon, setCoupon] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+function Home() {
+  const [formData, setFormData] = useState({
+    origin: '',
+    destination: '',
+    departureDate: '',
+    returnDate: '',
+    passengers: 1
+  });
 
-  const handleSearch = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await fetch("https://tusukvar-backend.onrender.com/api/flights/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ from, to, date }),
-      });
-
-      const data = await response.json();
-
-      if (data.flights) {
-        setResults(data.flights);
-      } else {
-        setResults([]);
-        setError("לא נמצאו טיסות.");
-      }
-    } catch (err) {
-      console.error("שגיאה:", err);
-      setError("שגיאה בטעינת טיסות.");
-    }
-
-    setLoading(false);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const calculatePrice = (basePrice) => {
-    const profitPercent = 10;
-    const vat = 0.17;
-    const cardFee = 0.023;
-    const discount = coupon === "TUSU5" ? 0.05 : coupon === "TUSU15" ? 0.15 : 0;
-
-    let price = basePrice * (1 + profitPercent / 100 + vat + cardFee);
-    price = price * (1 - discount);
-
-    return price.toFixed(2);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Searching flights with:', formData);
+    // פה נשלב שליחה לשרת בהמשך
   };
 
   return (
-    <div className="home">
-      <h2>חיפוש טיסות</h2>
-      <div>
+    <div className="home-container">
+      <header className="home-header">
+        <h1>טוסו כבר</h1>
+        <p>השוואת טיסות ומלונות בזמן אמת, בלי הפתעות במחיר.</p>
+      </header>
+
+      <form className="flight-form" onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="מ- (מדינה או עיר)"
-          value={from}
-          onChange={(e) => setFrom(e.target.value)}
+          name="origin"
+          placeholder="מוצא"
+          value={formData.origin}
+          onChange={handleChange}
+          required
         />
         <input
           type="text"
-          placeholder="אל (מדינה או עיר)"
-          value={to}
-          onChange={(e) => setTo(e.target.value)}
+          name="destination"
+          placeholder="יעד"
+          value={formData.destination}
+          onChange={handleChange}
+          required
         />
         <input
           type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
+          name="departureDate"
+          value={formData.departureDate}
+          onChange={handleChange}
+          required
         />
         <input
-          type="text"
-          placeholder="קוד קופון (אם יש)"
-          value={coupon}
-          onChange={(e) => setCoupon(e.target.value)}
+          type="date"
+          name="returnDate"
+          value={formData.returnDate}
+          onChange={handleChange}
+          required
         />
-        <button onClick={handleSearch}>חפש טיסות</button>
-      </div>
+        <input
+          type="number"
+          name="passengers"
+          min="1"
+          value={formData.passengers}
+          onChange={handleChange}
+          required
+        />
+        <button type="submit">חפש טיסות</button>
+      </form>
 
-      {loading && <p>טוען תוצאות...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <div className="results">
-        {results.map((flight, index) => (
-          <div key={index} className="flight-card">
-            <p><strong>חברה:</strong> {flight.airline}</p>
-            <p><strong>יציאה:</strong> {flight.departureTime}</p>
-            <p><strong>נחיתה:</strong> {flight.arrivalTime}</p>
-            <p><strong>מחיר סופי:</strong> ${calculatePrice(flight.basePrice)}</p>
-          </div>
-        ))}
+      <div className="chat-fixed">
+        <ChatWidget />
       </div>
     </div>
   );
-};
+}
 
 export default Home;
