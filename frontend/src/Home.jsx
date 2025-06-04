@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Home.css';
-import ChatWidget from './components/ChatWidget';
+import ChatWidget from './components/chatwidget';
 
 function Home() {
   const [origin, setOrigin] = useState('');
