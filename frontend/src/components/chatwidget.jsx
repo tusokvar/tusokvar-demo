@@ -3,39 +3,33 @@ import './chatwidget.css';
 
 function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState('');
   const [messages, setMessages] = useState([
-    { sender: 'bot', text: 'היי! איך אפשר לעזור?' }
+    { from: 'bot', text: 'שלום! איך אפשר לעזור?' }
   ]);
+  const [newMessage, setNewMessage] = useState('');
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleSend = () => {
-    if (input.trim()) {
-      setMessages([...messages, { sender: 'user', text: input }]);
-      setInput('');
-
-      setTimeout(() => {
-        setMessages(prev => [
-          ...prev,
-          { sender: 'bot', text: 'קיבלתי את ההודעה שלך 🙂' }
-        ]);
-      }, 1000);
-    }
+  const sendMessage = () => {
+    if (newMessage.trim() === '') return;
+    const updatedMessages = [...messages, { from: 'user', text: newMessage }];
+    updatedMessages.push({ from: 'bot', text: 'נחזור אליך בהקדם!' });
+    setMessages(updatedMessages);
+    setNewMessage('');
   };
 
   return (
     <div className={chat-widget ${isOpen ? 'open' : ''}}>
-      <div className="chat-toggle" onClick={toggleChat}>
+      <button className="chat-toggle" onClick={toggleChat}>
         💬
-      </div>
+      </button>
       {isOpen && (
         <div className="chat-box">
           <div className="chat-messages">
             {messages.map((msg, index) => (
-              <div key={index} className={message ${msg.sender}}>
+              <div key={index} className={chat-message ${msg.from}}>
                 {msg.text}
               </div>
             ))}
@@ -43,11 +37,11 @@ function ChatWidget() {
           <div className="chat-input">
             <input
               type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
               placeholder="הקלד הודעה..."
             />
-            <button onClick={handleSend}>שלח</button>
+            <button onClick={sendMessage}>שלח</button>
           </div>
         </div>
       )}
