@@ -11,7 +11,7 @@ function Home() {
   const handleSearch = async () => {
     try {
       const response = await fetch(https://tusokvar-demo.onrender.com/api/flights?origin=${origin}&destination=${destination}&date=${date});
-      const data = await response.json();
+      const response = await fetch("https://tusokvar-demo.onrender.com/api/flights");
       setResults(data.flights || []);
     } catch (error) {
       console.error('Error fetching flights:', error);
