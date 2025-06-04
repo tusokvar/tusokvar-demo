@@ -1,0 +1,30 @@
+.payment-container {
+  max-width: 500px;
+  margin: auto;
+  background-color: #1a1a1a;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.payment-container input {
+  padding: 8px;
+  margin-top: 10px;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.pay-btn {
+  margin-top: 15px;
+  padding: 10px;
+  width: 100%;
+  background-color: #0099cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.success-msg {
+  margin-top: 15px;
+  color: #00cc66;
+}
