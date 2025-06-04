@@ -32,7 +32,7 @@ function ChatWidget() {
         <div className="chat-box">
           <div className="chat-messages">
             {messages.map((msg, index) => (
-              <div key={index} className={chat-message ${msg.from}}>
+              <div key={index} className={`chat-message ${msg.from}`}>
                 {msg.text}
               </div>
             ))}
