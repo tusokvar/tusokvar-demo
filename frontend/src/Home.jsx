@@ -10,8 +10,8 @@ function Home() {
 
   const handleSearch = async () => {
     try {
-      const response = await fetch(https://tusokvar-demo.onrender.com/api/flights?origin=${origin}&destination=${destination}&date=${date});
       const response = await fetch("https://tusokvar-demo.onrender.com/api/flights");
+      const data = await response.json();
       setResults(data.flights || []);
     } catch (error) {
       console.error('Error fetching flights:', error);
@@ -20,18 +20,18 @@ function Home() {
 
   return (
     <div className="home-container">
-      <h1>טוסו כבר ✈</h1>
+      <h1>✈ טוסו כבר</h1>
 
       <div className="search-section">
         <input
           type="text"
-          placeholder="מוצא (Origin)"
+          placeholder="מוצא"
           value={origin}
           onChange={(e) => setOrigin(e.target.value)}
         />
         <input
           type="text"
-          placeholder="יעד (Destination)"
+          placeholder="יעד"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
         />
@@ -40,21 +40,21 @@ function Home() {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <button onClick={handleSearch}>חיפוש טיסה</button>
+        <button onClick={handleSearch}>חפש טיסות</button>
       </div>
 
       <div className="results-section">
         {results.length > 0 ? (
           results.map((flight, index) => (
             <div key={index} className="flight-card">
-              <p><strong>מחיר:</strong> {flight.price} ₪</p>
-              <p><strong>חברת תעופה:</strong> {flight.airline}</p>
-              <p><strong>שעת המראה:</strong> {flight.departureTime}</p>
-              <p><strong>שעת נחיתה:</strong> {flight.arrivalTime}</p>
+              <p>חברת תעופה: {flight.airline}</p>
+              <p>יציאה: {flight.departure}</p>
+              <p>נחיתה: {flight.arrival}</p>
+              <p>מחיר: {flight.price} ₪</p>
             </div>
           ))
         ) : (
-          <p>אין תוצאות להצגה.</p>
+          <p>לא נמצאו טיסות</p>
         )}
       </div>
 
