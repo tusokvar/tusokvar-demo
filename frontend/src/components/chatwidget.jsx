@@ -14,8 +14,13 @@ function ChatWidget() {
 
   const sendMessage = () => {
     if (newMessage.trim() === '') return;
-    const updatedMessages = [...messages, { from: 'user', text: newMessage }];
-    updatedMessages.push({ from: 'bot', text: 'נחזור אליך בהקדם!' });
+
+    const updatedMessages = [
+      ...messages,
+      { from: 'user', text: newMessage },
+      { from: 'bot', text: 'נחזור אליך בהקדם!' }
+    ];
+
     setMessages(updatedMessages);
     setNewMessage('');
   };
