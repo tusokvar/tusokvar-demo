@@ -26,10 +26,8 @@ function ChatWidget() {
   };
 
   return (
-    <div className={chat-widget ${isOpen ? 'open' : ''}}>
-      <button className="chat-toggle" onClick={toggleChat}>
-        💬
-      </button>
+    <div className={`chat-widget ${isOpen ? 'open' : ''}`}>
+      <button className="chat-toggle" onClick={toggleChat}>💬</button>
       {isOpen && (
         <div className="chat-box">
           <div className="chat-messages">
