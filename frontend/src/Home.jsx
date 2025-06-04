@@ -1,82 +1,64 @@
 import React, { useState } from 'react';
 import './Home.css';
-import ChatWidget from '../components/ChatWidget';
+import ChatWidget from './components/ChatWidget';
 
 function Home() {
-  const [formData, setFormData] = useState({
-    origin: '',
-    destination: '',
-    departureDate: '',
-    returnDate: '',
-    passengers: 1
-  });
+  const [origin, setOrigin] = useState('');
+  const [destination, setDestination] = useState('');
+  const [date, setDate] = useState('');
+  const [results, setResults] = useState([]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Searching flights with:', formData);
-    // פה נשלב שליחה לשרת בהמשך
+  const handleSearch = async () => {
+    try {
+      const response = await fetch(https://tusokvar-demo.onrender.com/api/flights?origin=${origin}&destination=${destination}&date=${date});
+      const data = await response.json();
+      setResults(data.flights || []);
+    } catch (error) {
+      console.error('Error fetching flights:', error);
+    }
   };
 
   return (
     <div className="home-container">
-      <header className="home-header">
-        <h1>טוסו כבר</h1>
-        <p>השוואת טיסות ומלונות בזמן אמת, בלי הפתעות במחיר.</p>
-      </header>
+      <h1>טוסו כבר ✈</h1>
 
-      <form className="flight-form" onSubmit={handleSubmit}>
+      <div className="search-section">
         <input
           type="text"
-          name="origin"
-          placeholder="מוצא"
-          value={formData.origin}
-          onChange={handleChange}
-          required
+          placeholder="מוצא (Origin)"
+          value={origin}
+          onChange={(e) => setOrigin(e.target.value)}
         />
         <input
           type="text"
-          name="destination"
-          placeholder="יעד"
-          value={formData.destination}
-          onChange={handleChange}
-          required
+          placeholder="יעד (Destination)"
+          value={destination}
+          onChange={(e) => setDestination(e.target.value)}
         />
         <input
           type="date"
-          name="departureDate"
-          value={formData.departureDate}
-          onChange={handleChange}
-          required
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
         />
-        <input
-          type="date"
-          name="returnDate"
-          value={formData.returnDate}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="number"
-          name="passengers"
-          min="1"
-          value={formData.passengers}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">חפש טיסות</button>
-      </form>
-
-      <div className="chat-fixed">
-        <ChatWidget />
+        <button onClick={handleSearch}>חיפוש טיסה</button>
       </div>
+
+      <div className="results-section">
+        {results.length > 0 ? (
+          results.map((flight, index) => (
+            <div key={index} className="flight-card">
+              <p><strong>מחיר:</strong> {flight.price} ₪</p>
+              <p><strong>חברת תעופה:</strong> {flight.airline}</p>
+              <p><strong>שעת המראה:</strong> {flight.departureTime}</p>
+              <p><strong>שעת נחיתה:</strong> {flight.arrivalTime}</p>
+            </div>
+          ))
+        ) : (
+          <p>אין תוצאות להצגה.</p>
+        )}
+      </div>
+
+      <ChatWidget />
     </div>
   );
 }
