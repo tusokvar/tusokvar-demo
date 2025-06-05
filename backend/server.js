@@ -1,11 +1,11 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const mongoose = require('mongoose');
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import mongoose from 'mongoose';
 
-const userRoutes = require('./routes/userRoutes');
-const flightRoutes = require('./routes/flightRoutes');
-const emailRoutes = require('./routes/emailRoutes');
+import userRoutes from './routes/userRoutes.js';
+import flightRoutes from './routes/flightRoutes.js';
+import emailRoutes from './routes/emailRoutes.js';
 
 dotenv.config();
 
@@ -16,21 +16,25 @@ app.use(express.json());
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
+  useUnifiedTopology: true
+}).then(() => {
   console.log(`✅ MongoDB connected: ${mongoose.connection.host}`);
-})
-.catch((error) => {
+}).catch((error) => {
   console.error('❌ MongoDB connection error:', error);
   process.exit(1);
 });
 
-// Routes
+// API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/flights', flightRoutes);
-app.use('/api/email', emailRoutes);
+app.use('/api/emails', emailRoutes);
 
+// Root
+app.get('/', (req, res) => {
+  res.send('Server is running...');
+});
+
+// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
