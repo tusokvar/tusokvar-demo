@@ -1,25 +1,29 @@
-import React from "react";
-import "./Home.css";
+// src/pages/FlightResults.jsx
+import React from 'react';
+import './FlightResults.css';
 
-function FlightResults({ results }) {
+const FlightResults = ({ results, onBook }) => {
   return (
     <div className="results-container">
       <h2>תוצאות חיפוש</h2>
-      {results && results.length > 0 ? (
+      {results.length === 0 ? (
+        <p>לא נמצאו טיסות תואמות</p>
+      ) : (
         results.map((flight, index) => (
-          <div className="flight-card" key={index}>
-            <h3>{flight.airline}</h3>
-            <p>המראה: {flight.departure} | נחיתה: {flight.arrival}</p>
-            <p>מחיר: ${flight.price}</p>
-            <p>תנאי ביטול: {flight.cancellationPolicy}</p>
-            <button>בחר טיסה זו</button>
+          <div key={index} className="flight-card">
+            <p><strong>חברה:</strong> {flight.airline}</p>
+            <p><strong>מספר טיסה:</strong> {flight.flightNumber}</p>
+            <p><strong>מוצא:</strong> {flight.origin}</p>
+            <p><strong>יעד:</strong> {flight.destination}</p>
+            <p><strong>תאריך:</strong> {flight.date}</p>
+            <p><strong>שעה:</strong> {flight.time}</p>
+            <p><strong>מחיר:</strong> {flight.price} ₪</p>
+            <button onClick={() => onBook(flight)}>הזמן</button>
           </div>
         ))
-      ) : (
-        <p>לא נמצאו טיסות.</p>
       )}
     </div>
   );
-}
+};
 
 export default FlightResults;
