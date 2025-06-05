@@ -1,8 +1,15 @@
 const express = require('express');
-const router = express.Router();
-const { sendFlightEmail } = require('../controllers/emailController');
+const { registerUser, loginUser, getUserProfile } = require('../controllers/userController');
 
-// POST /api/email/send
-router.post('/send', sendFlightEmail);
+const router = express.Router();
+
+// רישום משתמש חדש
+router.post('/register', registerUser);
+
+// התחברות משתמש
+router.post('/login', loginUser);
+
+// פרופיל משתמש
+router.get('/profile', getUserProfile);
 
 module.exports = router;
