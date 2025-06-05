@@ -1,9 +1,9 @@
-import express from 'express';
-import { getFlights } from '../controllers/flightController.js';
-
+// backend/routes/flightRoutes.js
+const express = require('express');
 const router = express.Router();
+const { searchFlights } = require('../controllers/flightController');
 
-// לדוגמה נתיב לקבלת טיסות, למשל: GET /api/flights?origin=TLV&destination=NYC&date=2025-06-10
-router.get('/', getFlights);
+// חיפוש טיסות
+router.post('/search', searchFlights);
 
-export default router;
+module.exports = router;
