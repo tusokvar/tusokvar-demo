@@ -1,45 +1,44 @@
+// backend/flightController.js
 const axios = require('axios');
-require('dotenv').config();
 
-const searchFlights = async (req, res) => {
-  const { origin, destination, departureDate, returnDate, adults } = req.query;
+const getAccessToken = async () => {
+  const { AMADEUS_CLIENT_ID, AMADEUS_CLIENT_SECRET } = process.env;
+  const response = await axios.post(
+    'https://test.api.amadeus.com/v1/security/oauth2/token',
+    new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: AMADEUS_CLIENT_ID,
+      client_secret: AMADEUS_CLIENT_SECRET,
+    }),
+    { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+  );
 
+  return response.data.access_token;
+};
+
+exports.searchFlights = async (req, res) => {
   try {
-    const tokenResponse = await axios.post(
-      'https://test.api.amadeus.com/v1/security/oauth2/token',
-      new URLSearchParams({
-        grant_type: 'client_credentials',
-        client_id: process.env.AMADEUS_API_KEY,
-        client_secret: process.env.AMADEUS_API_SECRET
-      }),
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-    );
+    const accessToken = await getAccessToken();
+    const { origin, destination, date } = req.query;
 
-    const token = tokenResponse.data.access_token;
-
-    const flightResponse = await axios.get(
+    const response = await axios.get(
       'https://test.api.amadeus.com/v2/shopping/flight-offers',
       {
-        headers: {
-          Authorization: Bearer ${token}
-        },
+        headers: { Authorization: `Bearer ${accessToken}` },
         params: {
           originLocationCode: origin,
           destinationLocationCode: destination,
-          departureDate,
-          returnDate,
-          adults,
+          departureDate: date,
+          adults: 1,
           currencyCode: 'USD',
           max: 10
-        }
+        },
       }
     );
 
-    res.status(200).json(flightResponse.data);
+    res.json(response.data);
   } catch (error) {
     console.error('Error fetching flights:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Failed to fetch flights' });
+    res.status(500).json({ message: 'Failed to fetch flight offers' });
   }
 };
-
-module.exports = { searchFlights };
