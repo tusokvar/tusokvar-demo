@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Home.css';
-import ChatWidget from './components/chatwidget';
+import ChatWidget from '../components/chatwidget';
 
 function Home() {
   const [origin, setOrigin] = useState('');
@@ -10,7 +10,14 @@ function Home() {
 
   const handleSearch = async () => {
     try {
-      const response = await fetch("https://tusokvar-demo.onrender.com/api/flights");
+      const response = await fetch('https://tusokvar-demo.onrender.com/api/flights/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ origin, destination, date })
+      });
+
       const data = await response.json();
       setResults(data.flights || []);
     } catch (error) {
@@ -46,15 +53,14 @@ function Home() {
       <div className="results-section">
         {results.length > 0 ? (
           results.map((flight, index) => (
-            <div key={index} className="flight-card">
-              <p>חברת תעופה: {flight.airline}</p>
-              <p>יציאה: {flight.departure}</p>
-              <p>נחיתה: {flight.arrival}</p>
+            <div key={index} className="flight-result">
+              <p>טיסה מ־{flight.origin} ל־{flight.destination}</p>
+              <p>תאריך: {flight.date}</p>
               <p>מחיר: {flight.price} ₪</p>
             </div>
           ))
         ) : (
-          <p>לא נמצאו טיסות</p>
+          <p>אין תוצאות להצגה.</p>
         )}
       </div>
 
