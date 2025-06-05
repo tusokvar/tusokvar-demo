@@ -1,34 +1,41 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
-const flightRoutes = require('./routes/flightRoutes');
-const userRoutes = require('./routes/userRoutes');
-const cors = require('cors');
-const path = require('path');
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import mongoose from 'mongoose';
+
+import userRoutes from './routes/userRoutes.js';
+import flightRoutes from './routes/flightRoutes.js';
+import emailRoutes from './routes/emailRoutes.js';
 
 dotenv.config();
-connectDB();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ראוטים
-app.use('/api/flights', flightRoutes);
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log(`✅ MongoDB connected: ${mongoose.connection.host}`);
+}).catch((error) => {
+  console.error('❌ MongoDB connection error:', error);
+  process.exit(1);
+});
+
+// Routes
 app.use('/api/users', userRoutes);
+app.use('/api/flights', flightRoutes);
+app.use('/api/email', emailRoutes);
 
-// הפניית פרונטאנד אם הוא באותו שרת (Production)
-if (process.env.NODE_ENV === 'production') {
-  const __dirname1 = path.resolve();
-  app.use(express.static(path.join(__dirname1, '/frontend/build')));
+// Test route
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working' });
+});
 
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname1, 'frontend', 'build', 'index.html'))
-  );
-}
-
+// Start server
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
