@@ -1,11 +1,11 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import mongoose from 'mongoose';
+const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const mongoose = require('mongoose');
 
-import userRoutes from './routes/userRoutes.js';
-import flightRoutes from './routes/flightRoutes.js';
-import emailRoutes from './routes/emailRoutes.js';
+const userRoutes = require('./routes/userRoutes');
+const flightRoutes = require('./routes/flightRoutes');
+const emailRoutes = require('./routes/emailRoutes');
 
 dotenv.config();
 
@@ -16,10 +16,12 @@ app.use(express.json());
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
+  useUnifiedTopology: true
+})
+.then(() => {
   console.log(`✅ MongoDB connected: ${mongoose.connection.host}`);
-}).catch((error) => {
+})
+.catch((error) => {
   console.error('❌ MongoDB connection error:', error);
   process.exit(1);
 });
@@ -28,11 +30,6 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use('/api/users', userRoutes);
 app.use('/api/flights', flightRoutes);
 app.use('/api/email', emailRoutes);
-
-// Test route
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'API is working' });
-});
 
 // Start server
 const PORT = process.env.PORT || 5000;
