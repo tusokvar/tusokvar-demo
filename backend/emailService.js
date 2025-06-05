@@ -1,31 +1,34 @@
 // backend/emailService.js
-
 const nodemailer = require('nodemailer');
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT) || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
+const createTransporter = () => {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: Number(process.env.SMTP_PORT) === 465,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    }
+  });
+};
 
-async function sendMail(to, subject, html) {
+/**
+ * שליחת מייל כללי. 
+ * @param {object} options 
+ *   { to, subject, text, html }
+ */
+const sendEmail = async (options) => {
+  const transporter = createTransporter();
   const mailOptions = {
-    from: "${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>,
-    to,
-    subject,
-    html
+    from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`,
+    to: options.to,
+    subject: options.subject,
+    text: options.text || '',
+    html: options.html || null
   };
+  const info = await transporter.sendMail(mailOptions);
+  return info;
+};
 
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log('Email sent to:', to);
-  } catch (err) {
-    console.error('Error sending email:', err);
-  }
-}
-
-module.exports = { sendMail };
+module.exports = { sendEmail };
