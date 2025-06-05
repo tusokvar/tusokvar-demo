@@ -1,39 +1,60 @@
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 
-export const register = async (req, res) => {
+/**
+ * רישום משתמש חדש
+ */
+export const registerUser = async (req, res) => {
+  const { name, email, password } = req.body;
+
   try {
-    const { name, email, password } = req.body;
+    // בדיקה אם קיים כבר משתמש עם אותו אימייל
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ error: 'האימייל כבר קיים' });
+    // יצירת משתמש חדש
+    const user = await User.create({ name, email, password });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new User({ name, email, password: hashedPassword });
-    await newUser.save();
-
-    res.status(201).json({ message: 'נרשמת בהצלחה' });
-  } catch (err) {
-    res.status(500).json({ error: 'שגיאה ברישום המשתמש' });
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email
+    });
+  } catch (error) {
+    console.error('❌ Error registering user:', error);
+    res.status(500).json({ message: 'Failed to register user', error: error.message });
   }
 };
 
-export const login = async (req, res) => {
+/**
+ * התחברות משתמש ותשדורת JWT
+ */
+export const authUser = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
-
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ error: 'משתמש לא נמצא' });
+    if (user && (await user.matchPassword(password))) {
+      // יצירת JWT
+      const token = jwt.sign(
+        { userId: user._id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '30d' }
+      );
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: 'סיסמה שגויה' });
-
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secretkey', { expiresIn: '2h' });
-
-    res.json({ message: 'התחברת בהצלחה', token });
-  } catch (err) {
-    res.status(500).json({ error: 'שגיאה בהתחברות' });
+      return res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        token
+      });
+    } else {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+  } catch (error) {
+    console.error('❌ Error authenticating user:', error);
+    res.status(500).json({ message: 'Authentication failed', error: error.message });
   }
 };
