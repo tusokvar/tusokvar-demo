@@ -16,25 +16,21 @@ app.use(express.json());
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
+  useUnifiedTopology: true,
+})
+.then(() => {
   console.log(`✅ MongoDB connected: ${mongoose.connection.host}`);
-}).catch((error) => {
+})
+.catch((error) => {
   console.error('❌ MongoDB connection error:', error);
   process.exit(1);
 });
 
-// API Routes
+// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/flights', flightRoutes);
-app.use('/api/emails', emailRoutes);
+app.use('/api/email', emailRoutes);
 
-// Root route
-app.get('/', (req, res) => {
-  res.send('Server is running...');
-});
-
-// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
