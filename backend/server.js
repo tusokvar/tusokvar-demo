@@ -1,37 +1,41 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import mongoose from 'mongoose';
+import connectDB from './config/db.js';
 
-import userRoutes from './routes/userRoutes.js';
-import flightRoutes from './routes/flightRoutes.js';
+// ייבוא הנתיבים
 import emailRoutes from './routes/emailRoutes.js';
+import flightRoutes from './routes/flightRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
+// נטען את קובץ ה־.env
 dotenv.config();
 
 const app = express();
+
+// מיידלווייר גלובליים
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log(`✅ MongoDB connected: ${mongoose.connection.host}`);
-})
-.catch((error) => {
-  console.error('❌ MongoDB connection error:', error);
-  process.exit(1);
+// חיבור ל־MongoDB
+connectDB();
+
+// --- הגדרת הנתיבים ---
+app.use('/api/emails', emailRoutes);
+app.use('/api/flights', flightRoutes);
+app.use('/api/users', userRoutes);
+
+// אפשר להוסיף כאן נתיבי API נוספים אם צריך
+
+// בדיקת פעילות בסיסית
+app.get('/', (req, res) => {
+  res.send('🛫 Tusokvar Backend is running 🛬');
 });
 
-// Routes
-app.use('/api/users', userRoutes);
-app.use('/api/flights', flightRoutes);
-app.use('/api/email', emailRoutes);
-
+// בחירת פורט מתוך הסביבה או 5000 כ־default
 const PORT = process.env.PORT || 5000;
+
+// הרצת השרת
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
