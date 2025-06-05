@@ -1,60 +1,52 @@
-import jwt from 'jsonwebtoken';
-import User from '../models/user.js';
+// backend/controllers/userController.js
+const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
-/**
- * רישום משתמש חדש
- */
-export const registerUser = async (req, res) => {
+// שימושי כדי ליצור JWT
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+  });
+};
+
+// @desc    Register new user
+// @route   POST /api/users/register
+// @access  Public
+const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
-
-  try {
-    // בדיקה אם קיים כבר משתמש עם אותו אימייל
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // יצירת משתמש חדש
-    const user = await User.create({ name, email, password });
-
-    res.status(201).json({
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    return res.status(400).json({ message: 'User already exists' });
+  }
+  const user = await User.create({ name, email, password });
+  if (user) {
+    return res.status(201).json({
       _id: user._id,
       name: user.name,
-      email: user.email
+      email: user.email,
+      token: generateToken(user._id)
     });
-  } catch (error) {
-    console.error('❌ Error registering user:', error);
-    res.status(500).json({ message: 'Failed to register user', error: error.message });
+  } else {
+    return res.status(400).json({ message: 'Invalid user data' });
   }
 };
 
-/**
- * התחברות משתמש ותשדורת JWT
- */
-export const authUser = async (req, res) => {
+// @desc    Authenticate user & get token
+// @route   POST /api/users/login
+// @access  Public
+const authUser = async (req, res) => {
   const { email, password } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-    if (user && (await user.matchPassword(password))) {
-      // יצירת JWT
-      const token = jwt.sign(
-        { userId: user._id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '30d' }
-      );
-
-      return res.status(200).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        token
-      });
-    } else {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-  } catch (error) {
-    console.error('❌ Error authenticating user:', error);
-    res.status(500).json({ message: 'Authentication failed', error: error.message });
+  const user = await User.findOne({ email }).select('+password');
+  if (user && (await user.matchPassword(password))) {
+    return res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id)
+    });
+  } else {
+    return res.status(401).json({ message: 'Invalid email or password' });
   }
 };
+
+module.exports = { registerUser, authUser };
