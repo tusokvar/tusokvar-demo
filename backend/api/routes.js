@@ -1,31 +1,22 @@
+// backend/api/routes.js
 const express = require('express');
 const router = express.Router();
 
-// Controllers
-const flightController = require('../flightController');
-const bookingController = require('../bookingController');
-const paymentController = require('../paymentController');
-const userController = require('../userController');
+// ייבוא כל הנתיבים
+const userRoutes = require('../routes/userRoutes');
+const flightRoutes = require('../routes/flightRoutes');
+const emailRoutes = require('../routes/emailRoutes');
 
-// Middleware
-const { protect } = require('../middleware/authMiddleware');
+// אופציית רכיבי תשלום אם יש צורך
+// const paymentRoutes = require('../routes/paymentRoutes');
+// const bookingRoutes = require('../routes/bookingRoutes');
 
-// 🔹 חיפוש טיסות (ללא צורך בהתחברות)
-router.get('/api/flights', flightController.searchFlights);
+router.use('/users', userRoutes);
+router.use('/flights', flightRoutes);
+router.use('/emails', emailRoutes);
 
-// 🔹 ביצוע הזמנה (דורש התחברות)
-router.post('/api/book', protect, bookingController.createBooking);
-
-// 🔹 תשלום (דורש התחברות)
-router.post('/api/pay', protect, paymentController.processPayment);
-
-// 🔹 הרשמה
-router.post('/api/register', userController.registerUser);
-
-// 🔹 התחברות
-router.post('/api/login', userController.loginUser);
-
-// 🔹 פרטי משתמש
-router.get('/api/profile', protect, userController.getUserProfile);
+// במידת הצורך נוסיף כאן עוד נתיבים
+// router.use('/payments', paymentRoutes);
+// router.use('/bookings', bookingRoutes);
 
 module.exports = router;
