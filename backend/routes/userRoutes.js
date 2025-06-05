@@ -1,15 +1,10 @@
 const express = require('express');
-const { registerUser, loginUser, getUserProfile } = require('../controllers/userController');
-
 const router = express.Router();
+const { registerUser, loginUser, getUserProfile } = require('../controllers/userController');
+const { protect } = require('../middleware/authMiddleware');
 
-// רישום משתמש חדש
 router.post('/register', registerUser);
-
-// התחברות משתמש
 router.post('/login', loginUser);
-
-// פרופיל משתמש
-router.get('/profile', getUserProfile);
+router.get('/profile', protect, getUserProfile);
 
 module.exports = router;
