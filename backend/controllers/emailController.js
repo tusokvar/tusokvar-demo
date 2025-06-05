@@ -1,32 +1,37 @@
-import nodemailer from 'nodemailer';
+// backend/controllers/emailController.js
+const nodemailer = require('nodemailer');
+const { MAIL_FROM_NAME, MAIL_FROM_ADDRESS, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
 
-// דוגמה לשליחת אימייל
-export const sendFlightEmail = async (req, res) => {
-  const { to, subject, text } = req.body;
+// פונקציה לשליחת אימייל אודות טיסה
+const sendFlightEmail = async (req, res) => {
+  const { to, subject, message } = req.body;
+
+  // הגדרת ה־transporter
+  let transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: Number(SMTP_PORT),
+    secure: Number(SMTP_PORT) === 465, // true אם פורט 465
+    auth: {
+      user: SMTP_USER,
+      pass: SMTP_PASS
+    }
+  });
+
+  const mailOptions = {
+    from: "${MAIL_FROM_NAME}" <${MAIL_FROM_ADDRESS}>,
+    to,
+    subject,
+    text: message
+  };
 
   try {
-    // הכנת טרנספורטר עם פרטי SMTP מתוך הסביבה
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE === 'true', // true אם רוצים SSL
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
-    });
-
-    // שליחת האימייל
-    await transporter.sendMail({
-      from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`,
-      to,
-      subject,
-      text
-    });
-
-    res.status(200).json({ message: 'Email sent successfully' });
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent:', info.messageId);
+    return res.json({ message: 'Email sent successfully', info });
   } catch (error) {
-    console.error('❌ Error sending email:', error);
-    res.status(500).json({ message: 'Failed to send email', error: error.message });
+    console.error('Error sending email:', error);
+    return res.status(500).json({ message: 'Error sending email' });
   }
 };
+
+module.exports = { sendFlightEmail };
