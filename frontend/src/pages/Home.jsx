@@ -1,35 +1,46 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './Home.css';
-import ChatWidget from '../components/chatwidget';
+import FlightResults from './FlightResults';
 
 function Home() {
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
   const [date, setDate] = useState('');
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('https://tusokvar-demo.onrender.com/api/flights/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ origin, destination, date })
-      });
-
-      const data = await response.json();
-      setResults(data.flights || []);
+      const response = await axios.get(
+        https://tusokvar-demo-1.onrender.com/api/flights/search,
+        {
+          params: { origin, destination, date }
+        }
+      );
+      setResults(response.data);
     } catch (error) {
-      console.error('Error fetching flights:', error);
+      console.error('שגיאה בחיפוש טיסות:', error);
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBook = async (flight) => {
+    try {
+      // פעולה עתידית: שליחת מייל עם flight
+      alert(נשלח מייל אישור על הטיסה ${flight.flightNumber});
+    } catch (error) {
+      console.error('שגיאה בעת ההזמנה:', error);
     }
   };
 
   return (
     <div className="home-container">
-      <h1>✈ טוסו כבר</h1>
-
-      <div className="search-section">
+      <h1>טוסו כבר ✈</h1>
+      <div className="search-form">
         <input
           type="text"
           placeholder="מוצא"
@@ -47,24 +58,11 @@ function Home() {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <button onClick={handleSearch}>חפש טיסות</button>
+        <button onClick={handleSearch}>חפש</button>
       </div>
-
-      <div className="results-section">
-        {results.length > 0 ? (
-          results.map((flight, index) => (
-            <div key={index} className="flight-result">
-              <p>טיסה מ־{flight.origin} ל־{flight.destination}</p>
-              <p>תאריך: {flight.date}</p>
-              <p>מחיר: {flight.price} ₪</p>
-            </div>
-          ))
-        ) : (
-          <p>אין תוצאות להצגה.</p>
-        )}
-      </div>
-
-      <ChatWidget />
+      {loading ? <p>טוען תוצאות...</p> : (
+        <FlightResults results={results} onBook={handleBook} />
+      )}
     </div>
   );
 }
