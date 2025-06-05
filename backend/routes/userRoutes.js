@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser } = require('../controllers/userController');
+const { sendFlightEmail } = require('../controllers/emailController');
 
-router.post('/register', registerUser);
-router.post('/login', loginUser);
+// POST /api/email/send
+router.post('/send', sendFlightEmail);
 
 module.exports = router;
