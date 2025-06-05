@@ -1,12 +1,12 @@
-import express from 'express';
-import { registerUser, authUser } from '../controllers/userController.js';
-
+// backend/routes/userRoutes.js
+const express = require('express');
 const router = express.Router();
+const { registerUser, authUser } = require('../controllers/userController');
 
-// לדוגמה: POST /api/users/register
+// רישום משתמש חדש
 router.post('/register', registerUser);
 
-// לדוגמה: POST /api/users/login
+// התחברות משתמש (login)
 router.post('/login', authUser);
 
-export default router;
+module.exports = router;
