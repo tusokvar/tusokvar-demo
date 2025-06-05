@@ -1,9 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import Home from './Home';
-import Payment from './Payment';
-import FlightResults from './FlightResults';
+import Home from './pages/Home';
+import Payment from './pages/Payment';
+import FlightResults from './pages/FlightResults';
+
+import './pages/Home.css';
+import './pages/Payment.css';
 
 function App() {
   return (
