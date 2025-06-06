@@ -1,4 +1,3 @@
-// frontend/src/components/chatwidget.jsx
 import React, { useState } from "react";
 import "./chatwidget.css";
 
@@ -13,7 +12,6 @@ const ChatWidget = () => {
     if (!input.trim()) return;
     setChat([...chat, { from: "user", text: input }]);
     setInput("");
-    // סימולציה של תשובה - תוכל להרחיב בעתיד
     setTimeout(() => {
       setChat((prev) => [...prev, { from: "bot", text: "נשמע מעולה! צוות טוסו כבר כאן לכל שאלה." }]);
     }, 800);
