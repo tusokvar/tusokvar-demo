@@ -14,7 +14,10 @@ const ChatWidget = () => {
     setChat([...chat, { from: "user", text: input }]);
     setInput("");
     setTimeout(() => {
-      setChat((prev) => [...prev, { from: "bot", text: "נשמע מעולה! צוות טוסו כבר כאן לכל שאלה." }]);
+      setChat((prev) => [
+        ...prev,
+        { from: "bot", text: "נשמע מעולה! צוות טוסו כבר כאן לכל שאלה." }
+      ]);
     }, 800);
   };
 
