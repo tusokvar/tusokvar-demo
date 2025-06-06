@@ -1,9 +1,7 @@
-// backend/routes/emailRoutes.js
 const express = require('express');
 const router = express.Router();
-const { sendFlightEmail } = require('../controllers/emailController');
+const { sendBookingConfirmation } = require('../controllers/emailController');
 
-// שליחת מייל על טיסה
-router.post('/send', sendFlightEmail);
+router.post('/send-confirmation', sendBookingConfirmation);
 
 module.exports = router;
