@@ -1,56 +1,121 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./Home.css";
-import logo from "../assets/logo.png"; // אם תוסיף לוגו כקובץ
+import axios from "axios";
+import { format } from "date-fns";
 
-const API_URL = "https://YOUR-BACKEND-URL.onrender.com/api/flights"; // עדכן לכתובת שלך
+const API_URL = "https://tusokvar-demo.onrender.com"; // כתובת ה-backend שלך
 
-const Home = () => {
+export default function Home() {
   const [origin, setOrigin] = useState("");
+  const [originOptions, setOriginOptions] = useState([]);
   const [destination, setDestination] = useState("");
-  const [date, setDate] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [destinationOptions, setDestinationOptions] = useState([]);
+  const [departureDate, setDepartureDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      // שמור ערכים בלוקאל סטוראג' כדי להעביר לעמוד התוצאות
-      localStorage.setItem("flight-search", JSON.stringify({ origin, destination, date }));
-      navigate("/results");
-    } catch (err) {
-      setError("ארעה שגיאה. נסה שוב.");
+  // שליפת הצעות מוצא
+  const handleOriginChange = async (e) => {
+    const value = e.target.value;
+    setOrigin(value);
+    if (value.length > 1) {
+      const res = await axios.get(
+        `${API_URL}/api/flights/airports/autocomplete?keyword=${value}`
+      );
+      setOriginOptions(res.data.data || []);
+    } else {
+      setOriginOptions([]);
     }
-    setLoading(false);
+  };
+
+  // שליפת הצעות יעד
+  const handleDestinationChange = async (e) => {
+    const value = e.target.value;
+    setDestination(value);
+    if (value.length > 1) {
+      const res = await axios.get(
+        `${API_URL}/api/flights/airports/autocomplete?keyword=${value}`
+      );
+      setDestinationOptions(res.data.data || []);
+    } else {
+      setDestinationOptions([]);
+    }
+  };
+
+  // בחירת תאריך יציאה
+  const handleDepartureDateChange = (e) => {
+    setDepartureDate(e.target.value);
+    // אם תאריך חזרה לפני תאריך יציאה - איפוס
+    if (returnDate && e.target.value > returnDate) {
+      setReturnDate("");
+    }
+  };
+
+  // בחירת תאריך חזרה
+  const handleReturnDateChange = (e) => {
+    setReturnDate(e.target.value);
+  };
+
+  // שליחה (לחיפוש)
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // כאן תוסיף קריאה ל-API לחיפוש טיסות, ותפנה לעמוד תוצאות/תעדכן state בהתאם
+    alert(`מוצא: ${origin}, יעד: ${destination}, יציאה: ${departureDate}, חזרה: ${returnDate || "אין"}`);
   };
 
   return (
     <div className="home-container">
-      <div className="home-header">
-        <img src={logo} alt="טוסו כבר" className="home-logo" />
-        <h1>טוסו כבר</h1>
-      </div>
-      <form className="flight-search-form" onSubmit={handleSearch}>
-        <div>
-          <label>מוצא</label>
-          <input value={origin} onChange={e => setOrigin(e.target.value)} required placeholder="לדוג' TLV" />
-        </div>
-        <div>
-          <label>יעד</label>
-          <input value={destination} onChange={e => setDestination(e.target.value)} required placeholder="לדוג' JFK" />
-        </div>
-        <div>
-          <label>תאריך טיסה</label>
-          <input type="date" value={date} onChange={e => setDate(e.target.value)} required />
-        </div>
-        <button type="submit" disabled={loading}>{loading ? "מחפש..." : "חפש טיסה"}</button>
-        {error && <div className="error">{error}</div>}
+      <h1>טוסו כבר</h1>
+      <form onSubmit={handleSubmit}>
+        <label>מוצא:</label>
+        <input
+          value={origin}
+          onChange={handleOriginChange}
+          placeholder="הכנס מוצא (לדוג' TLV)"
+          autoComplete="off"
+          list="origin-options"
+        />
+        <datalist id="origin-options">
+          {originOptions.map((opt) => (
+            <option key={opt.iataCode} value={opt.iataCode}>
+              {opt.name} ({opt.iataCode}) {opt.city && `- ${opt.city}`}
+            </option>
+          ))}
+        </datalist>
+
+        <label>יעד:</label>
+        <input
+          value={destination}
+          onChange={handleDestinationChange}
+          placeholder="הכנס יעד (לדוג' JFK)"
+          autoComplete="off"
+          list="destination-options"
+        />
+        <datalist id="destination-options">
+          {destinationOptions.map((opt) => (
+            <option key={opt.iataCode} value={opt.iataCode}>
+              {opt.name} ({opt.iataCode}) {opt.city && `- ${opt.city}`}
+            </option>
+          ))}
+        </datalist>
+
+        <label>תאריך יציאה:</label>
+        <input
+          type="date"
+          value={departureDate}
+          onChange={handleDepartureDateChange}
+          min={format(new Date(), "yyyy-MM-dd")}
+          required
+        />
+
+        <label>תאריך חזרה (אופציונלי):</label>
+        <input
+          type="date"
+          value={returnDate}
+          onChange={handleReturnDateChange}
+          min={departureDate || format(new Date(), "yyyy-MM-dd")}
+        />
+
+        <button type="submit">חפש טיסה</button>
       </form>
     </div>
   );
-};
-
-export default Home;
+}
