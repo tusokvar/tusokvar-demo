@@ -1,7 +1,8 @@
+// /backend/routes/flightRoutes.js
 const express = require('express');
 const router = express.Router();
-const { getFlights } = require('../controllers/flightController');
+const { autocompleteAirports } = require('../controllers/flightController');
 
-router.get('/', getFlights);
+router.get('/airports/autocomplete', autocompleteAirports);
 
 module.exports = router;
