@@ -1,3 +1,4 @@
+// src/components/chatwidget.jsx
 import React, { useState } from "react";
 import "./chatwidget.css";
 
