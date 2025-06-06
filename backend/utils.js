@@ -1,11 +1,5 @@
-// backend/utils.js
-
-// פונקציה לחישוב מחיר סופי (כולל markup, processing fee, VAT)
-const calculateFinalPrice = ({ basePrice, markupPercent, processingFeePercent, vatPercent }) => {
-  let priceWithMarkup = basePrice + (basePrice * markupPercent) / 100;
-  let priceWithFee = priceWithMarkup + (priceWithMarkup * processingFeePercent) / 100;
-  let priceWithVat = priceWithFee + (priceWithFee * vatPercent) / 100;
-  return Math.round(priceWithVat * 100) / 100; // שני ספרות אחרי הנקודה
+exports.formatPrice = (basePrice) => {
+    const markup = basePrice * 0.10;
+    const vat = basePrice * 0.18;
+    return (basePrice + markup + vat).toFixed(2);
 };
-
-module.exports = { calculateFinalPrice };
