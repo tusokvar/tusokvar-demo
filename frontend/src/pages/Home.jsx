@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { format } from "date-fns";
+import "./Home.css"; // ייבוא עיצוב
 
-const API_URL = "https://tusokvar-demo.onrender.com"; // כתובת ה-backend שלך
+const API_URL = "https://tusokvar-demo.onrender.com"; // כתובת הבקאנד שלך
 
 export default function Home() {
   const [origin, setOrigin] = useState("");
@@ -17,10 +18,14 @@ export default function Home() {
     const value = e.target.value;
     setOrigin(value);
     if (value.length > 1) {
-      const res = await axios.get(
-        `${API_URL}/api/flights/airports/autocomplete?keyword=${value}`
-      );
-      setOriginOptions(res.data.data || []);
+      try {
+        const res = await axios.get(
+          `${API_URL}/api/flights/airports/autocomplete?keyword=${value}`
+        );
+        setOriginOptions(res.data.data || []);
+      } catch (err) {
+        setOriginOptions([]);
+      }
     } else {
       setOriginOptions([]);
     }
@@ -31,10 +36,14 @@ export default function Home() {
     const value = e.target.value;
     setDestination(value);
     if (value.length > 1) {
-      const res = await axios.get(
-        `${API_URL}/api/flights/airports/autocomplete?keyword=${value}`
-      );
-      setDestinationOptions(res.data.data || []);
+      try {
+        const res = await axios.get(
+          `${API_URL}/api/flights/airports/autocomplete?keyword=${value}`
+        );
+        setDestinationOptions(res.data.data || []);
+      } catch (err) {
+        setDestinationOptions([]);
+      }
     } else {
       setDestinationOptions([]);
     }
@@ -43,7 +52,6 @@ export default function Home() {
   // בחירת תאריך יציאה
   const handleDepartureDateChange = (e) => {
     setDepartureDate(e.target.value);
-    // אם תאריך חזרה לפני תאריך יציאה - איפוס
     if (returnDate && e.target.value > returnDate) {
       setReturnDate("");
     }
@@ -57,8 +65,12 @@ export default function Home() {
   // שליחה (לחיפוש)
   const handleSubmit = (e) => {
     e.preventDefault();
-    // כאן תוסיף קריאה ל-API לחיפוש טיסות, ותפנה לעמוד תוצאות/תעדכן state בהתאם
-    alert(`מוצא: ${origin}, יעד: ${destination}, יציאה: ${departureDate}, חזרה: ${returnDate || "אין"}`);
+    // כאן אפשר לקרוא ל-API לחיפוש טיסות ולנתב לעמוד תוצאות
+    alert(
+      `מוצא: ${origin}, יעד: ${destination}, יציאה: ${departureDate}, חזרה: ${
+        returnDate || "אין"
+      }`
+    );
   };
 
   return (
@@ -76,7 +88,7 @@ export default function Home() {
         <datalist id="origin-options">
           {originOptions.map((opt) => (
             <option key={opt.iataCode} value={opt.iataCode}>
-              {opt.name} ({opt.iataCode}) {opt.city && `- ${opt.city}`}
+              {opt.name} ({opt.iataCode}){opt.city ? ` - ${opt.city}` : ""}
             </option>
           ))}
         </datalist>
@@ -92,7 +104,7 @@ export default function Home() {
         <datalist id="destination-options">
           {destinationOptions.map((opt) => (
             <option key={opt.iataCode} value={opt.iataCode}>
-              {opt.name} ({opt.iataCode}) {opt.city && `- ${opt.city}`}
+              {opt.name} ({opt.iataCode}){opt.city ? ` - ${opt.city}` : ""}
             </option>
           ))}
         </datalist>
