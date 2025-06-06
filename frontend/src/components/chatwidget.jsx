@@ -32,7 +32,7 @@ const ChatWidget = () => {
           <div className="chatbox-footer">
             <input
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={e => setInput(e.target.value)}
               placeholder="הקלד הודעה…"
               onKeyDown={e => (e.key === "Enter" && handleSend())}
             />
