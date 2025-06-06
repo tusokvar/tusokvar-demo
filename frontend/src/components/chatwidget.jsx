@@ -1,55 +1,53 @@
-import React, { useState } from 'react';
-import './chatwidget.css';
+// frontend/src/components/chatwidget.jsx
+import React, { useState } from "react";
+import "./chatwidget.css";
 
-function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { from: 'bot', text: 'שלום! איך אפשר לעזור?' }
+const ChatWidget = () => {
+  const [open, setOpen] = useState(false);
+  const [chat, setChat] = useState([
+    { from: "bot", text: "שלום! איך אפשר לעזור לך היום?" }
   ]);
-  const [newMessage, setNewMessage] = useState('');
+  const [input, setInput] = useState("");
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const sendMessage = () => {
-    if (newMessage.trim() === '') return;
-
-    const updatedMessages = [
-      ...messages,
-      { from: 'user', text: newMessage },
-      { from: 'bot', text: 'נחזור אליך בהקדם!' }
-    ];
-
-    setMessages(updatedMessages);
-    setNewMessage('');
+  const handleSend = () => {
+    if (!input.trim()) return;
+    setChat([...chat, { from: "user", text: input }]);
+    setInput("");
+    // סימולציה של תשובה - תוכל להרחיב בעתיד
+    setTimeout(() => {
+      setChat((prev) => [...prev, { from: "bot", text: "נשמע מעולה! צוות טוסו כבר כאן לכל שאלה." }]);
+    }, 800);
   };
 
   return (
-    <div className={`chat-widget ${isOpen ? 'open' : ''}`}>
-      <button className="chat-toggle" onClick={toggleChat}>💬</button>
-      {isOpen && (
-        <div className="chat-box">
-          <div className="chat-messages">
-            {messages.map((msg, index) => (
-              <div key={index} className={`chat-message ${msg.from}`}>
-                {msg.text}
-              </div>
+    <div className={chatwidget-container ${open ? "open" : ""}}>
+      {open ? (
+        <div className="chatbox">
+          <div className="chatbox-header" onClick={() => setOpen(false)}>
+            צ'אט עם טוסו כבר
+          </div>
+          <div className="chatbox-body">
+            {chat.map((msg, idx) => (
+              <div key={idx} className={chat-msg ${msg.from}}>{msg.text}</div>
             ))}
           </div>
-          <div className="chat-input">
+          <div className="chatbox-footer">
             <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="הקלד הודעה..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="הקלד הודעה…"
+              onKeyDown={e => (e.key === "Enter" && handleSend())}
             />
-            <button onClick={sendMessage}>שלח</button>
+            <button onClick={handleSend}>שלח</button>
           </div>
         </div>
+      ) : (
+        <button className="open-chat-btn" onClick={() => setOpen(true)}>
+          💬
+        </button>
       )}
     </div>
   );
-}
+};
 
 export default ChatWidget;
