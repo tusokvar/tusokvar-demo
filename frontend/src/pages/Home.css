@@ -1,69 +1,91 @@
-body, html, #root, .app-container {
-  background: #181e29;
-  min-height: 100vh;
-  margin: 0;
-  font-family: "Heebo", "Arial", sans-serif;
-  color: #fff;
-}
 .home-container {
-  max-width: 400px;
-  margin: 60px auto 0 auto;
-  background: rgba(23,30,41,0.98);
+  max-width: 420px;
+  margin: 48px auto 0 auto;
+  background: linear-gradient(145deg, #141e30 0%, #243b55 100%);
   border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.22);
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.home-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.home-logo {
-  width: 60px;
-  margin-bottom: 8px;
-}
-.flight-search-form {
-  margin-top: 30px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-.flight-search-form label {
-  font-size: 1rem;
-  margin-bottom: 4px;
-  color: #9edcff;
-}
-.flight-search-form input[type="text"],
-.flight-search-form input[type="date"] {
-  width: 100%;
-  padding: 10px;
-  border-radius: 9px;
-  border: none;
-  background: #232e3e;
+  box-shadow: 0 10px 32px 0 rgba(40,50,70,0.14);
+  padding: 40px 30px 30px 30px;
   color: #fff;
-  font-size: 1rem;
+  font-family: "Varela Round", Arial, sans-serif;
+  direction: rtl;
 }
-.flight-search-form button {
-  background: #14b8fc;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 0;
-  font-size: 1.05rem;
+
+.home-container h1 {
+  text-align: center;
+  color: #48c6ef;
+  margin-bottom: 32px;
+  font-size: 2.2rem;
   font-weight: bold;
-  margin-top: 12px;
-  cursor: pointer;
-  transition: background 0.2s;
+  letter-spacing: 1.2px;
+  text-shadow: 0 2px 10px rgba(0,100,200,0.12);
 }
-.flight-search-form button:disabled {
-  background: #77d1ff;
+
+.home-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-.error {
-  color: #ffe066;
-  margin-top: 8px;
+
+label {
+  font-size: 1.1rem;
+  color: #d6f0fa;
+  margin-bottom: 3px;
+  font-weight: 500;
+}
+
+input[type="text"],
+input[type="date"] {
+  width: 100%;
+  padding: 11px 12px;
+  margin-top: 1px;
+  background: #212b41;
+  color: #fff;
+  border: 1.5px solid #48c6ef;
+  border-radius: 7px;
+  outline: none;
   font-size: 1rem;
+  margin-bottom: 7px;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus {
+  border-color: #ffe16b;
+  box-shadow: 0 0 0 2px #ffe16b3a;
+}
+
+button[type="submit"] {
+  background: linear-gradient(90deg, #48c6ef 30%, #6f86d6 100%);
+  color: #fff;
+  border: none;
+  padding: 14px 0;
+  border-radius: 10px;
+  font-size: 1.12rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 2px 10px 0 #1b223a52;
+  margin-top: 8px;
+}
+
+button[type="submit"]:hover {
+  background: linear-gradient(90deg, #ffe16b 40%, #48c6ef 100%);
+  color: #131c36;
+  transform: translateY(-2px) scale(1.04);
+}
+
+@media (max-width: 600px) {
+  .home-container {
+    padding: 18px 4vw 22px 4vw;
+    border-radius: 0;
+    margin-top: 15px;
+  }
+  .home-container h1 {
+    font-size: 1.5rem;
+    margin-bottom: 18px;
+  }
+  button[type="submit"] {
+    font-size: 1rem;
+    padding: 11px 0;
+  }
 }
