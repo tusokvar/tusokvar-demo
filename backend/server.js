@@ -1,29 +1,36 @@
-// backend/server.js
-
+// /backend/server.js
 const express = require('express');
-const dotenv = require('dotenv');
 const cors = require('cors');
+const dotenv = require('dotenv');
 const connectDB = require('./config/db');
-const routes = require('./api/routes');
 
-// טעינת משתני סביבה
 dotenv.config();
-
-// חיבור למסד נתונים MongoDB
-connectDB();
 
 const app = express();
 
-// Middleware
+// חיבור למסד הנתונים (MongoDB)
+connectDB();
+
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// טעינת ה־routes הראשיים
-app.use('/api', routes);
+// טעינת כל הנתיבים הראשיים (API)
+const apiRoutes = require('./api/routes');
+app.use('/api', apiRoutes);
 
-// פורט להאזנה, מ־env או ברירת מחדל ל־5000
+// דף בית לבדיקת תקינות
+app.get('/', (req, res) => {
+  res.send('Tusokvar Backend API is running!');
+});
+
+// טיפול בנתיבים לא קיימים (404)
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+// הרצת השרת
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
