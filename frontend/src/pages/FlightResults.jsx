@@ -1,26 +1,85 @@
-// src/pages/FlightResults.jsx
-import React from 'react';
-import './FlightResults.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./FlightResults.css";
 
-const FlightResults = ({ results, onBook }) => {
+const API_URL = "https://YOUR-BACKEND-URL.onrender.com/api/flights"; // עדכן לכתובת שלך
+
+const FlightResults = () => {
+  const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sortKey, setSortKey] = useState("total");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const search = JSON.parse(localStorage.getItem("flight-search"));
+    if (!search) {
+      navigate("/");
+      return;
+    }
+    fetchFlights(search);
+  }, [navigate]);
+
+  const fetchFlights = async ({ origin, destination, date }) => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await axios.get(API_URL, {
+        params: { origin, destination, date }
+      });
+      setFlights(res.data);
+    } catch (err) {
+      setError("לא נמצאו טיסות או שגיאה בשרת");
+    }
+    setLoading(false);
+  };
+
+  const handleSort = (key) => {
+    setSortKey(key);
+    setFlights([...flights].sort((a, b) => {
+      if (!a.price || !b.price) return 0;
+      if (key === "total") return a.price.total - b.price.total;
+      if (key === "airline") return a.itineraries[0].segments[0].carrierCode.localeCompare(b.itineraries[0].segments[0].carrierCode);
+      return 0;
+    }));
+  };
+
+  const handleSelectFlight = (flight) => {
+    localStorage.setItem("selected-flight", JSON.stringify(flight));
+    navigate("/payment");
+  };
+
   return (
     <div className="results-container">
-      <h2>תוצאות חיפוש</h2>
-      {results.length === 0 ? (
-        <p>לא נמצאו טיסות תואמות</p>
-      ) : (
-        results.map((flight, index) => (
-          <div key={index} className="flight-card">
-            <p><strong>חברה:</strong> {flight.airline}</p>
-            <p><strong>מספר טיסה:</strong> {flight.flightNumber}</p>
-            <p><strong>מוצא:</strong> {flight.origin}</p>
-            <p><strong>יעד:</strong> {flight.destination}</p>
-            <p><strong>תאריך:</strong> {flight.date}</p>
-            <p><strong>שעה:</strong> {flight.time}</p>
-            <p><strong>מחיר:</strong> {flight.price} ₪</p>
-            <button onClick={() => onBook(flight)}>הזמן</button>
-          </div>
-        ))
+      <h2>תוצאות חיפוש טיסות</h2>
+      <div className="results-sort">
+        <span>מיין לפי:</span>
+        <button onClick={() => handleSort("total")}>מחיר</button>
+        <button onClick={() => handleSort("airline")}>חברת תעופה</button>
+      </div>
+      {loading ? <div>טוען תוצאות...</div> : error ? <div className="error">{error}</div> : (
+        <div className="flights-list">
+          {flights.map((flight, idx) => (
+            <div className="flight-card" key={idx}>
+              <div>
+                <strong>
+                  {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
+                </strong>
+                <span className="airline">
+                  {flight.itineraries[0].segments[0].carrierCode}
+                </span>
+              </div>
+              <div>
+                <span>מחיר כולל: <b>{Number(flight.price.total).toLocaleString()} ₪</b></span>
+              </div>
+              <div>
+                <small>דמי טיפול: {Number(flight.price.markup).toLocaleString()} ₪ | מע״מ: {Number(flight.price.vat).toLocaleString()} ₪</small>
+              </div>
+              <button onClick={() => handleSelectFlight(flight)}>המשך לתשלום</button>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
