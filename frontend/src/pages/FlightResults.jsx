@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../config";
 import "./FlightResults.css";
-
-const API_URL = "https://YOUR-BACKEND-URL.onrender.com/api/flights"; // עדכן לכתובת שלך
 
 const FlightResults = () => {
   const [flights, setFlights] = useState([]);
@@ -25,7 +24,7 @@ const FlightResults = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.get(API_URL, {
+      const res = await axios.get(`${API_URL}/flights`, {
         params: { origin, destination, date }
       });
       setFlights(res.data);
