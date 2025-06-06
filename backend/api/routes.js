@@ -1,12 +1,16 @@
+// /backend/api/routes.js
 const express = require('express');
 const router = express.Router();
 
-const userRoutes = require('../routes/userRoutes');
-const flightRoutes = require('../routes/flightRoutes');
-const emailRoutes = require('../routes/emailRoutes');
+// טעינת כל נתיבי המשנה
+router.use('/flights', require('../routes/flightRoutes'));
+router.use('/users', require('../routes/userRoutes'));
+router.use('/email', require('../routes/emailRoutes'));
+// תוכל להוסיף כאן נתיבים נוספים אם יש לך: chatRoutes וכו'
 
-router.use('/users', userRoutes);
-router.use('/flights', flightRoutes);
-router.use('/emails', emailRoutes);
+// ברירת מחדל - נתיב שגיאה
+router.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
 
 module.exports = router;
