@@ -1,70 +1,56 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './Home.css';
-import FlightResults from './FlightResults';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Home.css";
+import logo from "../assets/logo.png"; // אם תוסיף לוגו כקובץ
 
-function Home() {
-  const [origin, setOrigin] = useState('');
-  const [destination, setDestination] = useState('');
-  const [date, setDate] = useState('');
-  const [results, setResults] = useState([]);
+const API_URL = "https://YOUR-BACKEND-URL.onrender.com/api/flights"; // עדכן לכתובת שלך
+
+const Home = () => {
+  const [origin, setOrigin] = useState("");
+  const [destination, setDestination] = useState("");
+  const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSearch = async () => {
+  const handleSearch = async (e) => {
+    e.preventDefault();
     setLoading(true);
+    setError("");
     try {
-      const response = await axios.get(
-        https://tusokvar-demo-1.onrender.com/api/flights/search,
-        {
-          params: { origin, destination, date }
-        }
-      );
-      setResults(response.data);
-    } catch (error) {
-      console.error('שגיאה בחיפוש טיסות:', error);
-      setResults([]);
-    } finally {
-      setLoading(false);
+      // שמור ערכים בלוקאל סטוראג' כדי להעביר לעמוד התוצאות
+      localStorage.setItem("flight-search", JSON.stringify({ origin, destination, date }));
+      navigate("/results");
+    } catch (err) {
+      setError("ארעה שגיאה. נסה שוב.");
     }
-  };
-
-  const handleBook = async (flight) => {
-    try {
-      // פעולה עתידית: שליחת מייל עם flight
-      alert(נשלח מייל אישור על הטיסה ${flight.flightNumber});
-    } catch (error) {
-      console.error('שגיאה בעת ההזמנה:', error);
-    }
+    setLoading(false);
   };
 
   return (
     <div className="home-container">
-      <h1>טוסו כבר ✈</h1>
-      <div className="search-form">
-        <input
-          type="text"
-          placeholder="מוצא"
-          value={origin}
-          onChange={(e) => setOrigin(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="יעד"
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
-        />
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
-        <button onClick={handleSearch}>חפש</button>
+      <div className="home-header">
+        <img src={logo} alt="טוסו כבר" className="home-logo" />
+        <h1>טוסו כבר</h1>
       </div>
-      {loading ? <p>טוען תוצאות...</p> : (
-        <FlightResults results={results} onBook={handleBook} />
-      )}
+      <form className="flight-search-form" onSubmit={handleSearch}>
+        <div>
+          <label>מוצא</label>
+          <input value={origin} onChange={e => setOrigin(e.target.value)} required placeholder="לדוג' TLV" />
+        </div>
+        <div>
+          <label>יעד</label>
+          <input value={destination} onChange={e => setDestination(e.target.value)} required placeholder="לדוג' JFK" />
+        </div>
+        <div>
+          <label>תאריך טיסה</label>
+          <input type="date" value={date} onChange={e => setDate(e.target.value)} required />
+        </div>
+        <button type="submit" disabled={loading}>{loading ? "מחפש..." : "חפש טיסה"}</button>
+        {error && <div className="error">{error}</div>}
+      </form>
     </div>
   );
-}
+};
 
 export default Home;
