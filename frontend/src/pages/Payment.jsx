@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../config";
 import "./Payment.css";
-
-const API_URL = "https://YOUR-BACKEND-URL.onrender.com/api"; // עדכן לכתובת שלך
 
 const Payment = () => {
   const [flight, setFlight] = useState(null);
