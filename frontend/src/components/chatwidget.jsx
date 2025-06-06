@@ -22,7 +22,7 @@ const ChatWidget = () => {
   };
 
   return (
-    <div className={chatwidget-container ${open ? "open" : ""}}>
+    <div className={`chatwidget-container ${open ? "open" : ""}`}>
       {open ? (
         <div className="chatbox">
           <div className="chatbox-header" onClick={() => setOpen(false)}>
@@ -30,7 +30,7 @@ const ChatWidget = () => {
           </div>
           <div className="chatbox-body">
             {chat.map((msg, idx) => (
-              <div key={idx} className={chat-msg ${msg.from}}>{msg.text}</div>
+              <div key={idx} className={`chat-msg ${msg.from}`}>{msg.text}</div>
             ))}
           </div>
           <div className="chatbox-footer">
