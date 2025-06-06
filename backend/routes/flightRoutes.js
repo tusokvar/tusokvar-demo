@@ -1,9 +1,7 @@
-// backend/routes/flightRoutes.js
 const express = require('express');
 const router = express.Router();
-const { searchFlights } = require('../controllers/flightController');
+const { getFlights } = require('../controllers/flightController');
 
-// חיפוש טיסות
-router.post('/search', searchFlights);
+router.get('/', getFlights);
 
 module.exports = router;
