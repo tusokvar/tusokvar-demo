@@ -1,51 +1,37 @@
-import React, { useState } from 'react';
-import './Payment.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./Payment.css";
+
+const API_URL = "https://YOUR-BACKEND-URL.onrender.com/api"; // עדכן לכתובת שלך
 
 const Payment = () => {
-  const [coupon, setCoupon] = useState('');
-  const [price, setPrice] = useState(500); // לדוגמה
-  const [finalPrice, setFinalPrice] = useState(price);
-  const [confirmation, setConfirmation] = useState(false);
+  const [flight, setFlight] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [card, setCard] = useState("");
+  const [paying, setPaying] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [err, setErr] = useState("");
+  const [cancellationPolicy, setCancellationPolicy] = useState("ביטול עד 24 שעות לפני הטיסה – דמי ביטול 90 ₪");
 
-  const applyCoupon = () => {
-    let discount = 0;
-    if (coupon === 'TUSU5') discount = 0.05;
-    else if (coupon === 'TUSU15') discount = 0.15;
+  useEffect(() => {
+    const sel = localStorage.getItem("selected-flight");
+    if (sel) setFlight(JSON.parse(sel));
+  }, []);
 
-    let updated = price * (1 - discount);
-    updated *= 1.023; // תוספת סליקה
-    updated *= 1.17;  // מע"מ
-
-    setFinalPrice(updated.toFixed(2));
-  };
-
-  const handlePayment = () => {
-    setConfirmation(true);
-    // תהליך תשלום יתווסף כאן
-  };
-
-  return (
-    <div className="payment-container">
-      <h2>סיכום הזמנה</h2>
-      <p>טיסה לרומא - 17.6 עד 22.6</p>
-      <p>מחיר לפני מע"מ וסליקה: ${price}</p>
-
-      <input
-        type="text"
-        placeholder="קוד קופון"
-        value={coupon}
-        onChange={(e) => setCoupon(e.target.value)}
-      />
-      <button onClick={applyCoupon}>הפעל קופון</button>
-
-      <h3>סה״כ לתשלום: {finalPrice} ₪</h3>
-      <button className="pay-btn" onClick={handlePayment}>לתשלום</button>
-
-      {confirmation && (
-        <p className="success-msg">ההזמנה התקבלה! מייל עם כרטיס טיסה נשלח אליך.</p>
-      )}
-    </div>
-  );
-};
-
-export default Payment;
+  const handlePay = async (e) => {
+    e.preventDefault();
+    setPaying(true);
+    setErr("");
+    try {
+      // תהליך תשלום סימולציה בלבד. בפועל יש לחבר ל-Stripe Checkout!
+      // שלח ל-backend פרטי התשלום והזמנה
+      await axios.post(${API_URL}/payment, {
+        amount: Number(flight.price.total),
+        email,
+        name,
+        card,
+        flightId: flight.id
+      });
+      // שליחת מייל (אפשרות)
+      await axios.post(`${API_URL}/emails/send
