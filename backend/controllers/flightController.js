@@ -1,30 +1,32 @@
-// backend/controllers/flightController.js
-/**
- * כאן תשים לוגיקה שתתקשר עם Amadeus SDK או REST API
- * כדי להחזיר טיסות בהתאם לפרמטרים ב־req.body
- */
-const amadeus = require('amadeus'); // אם התקנת את המודול של Amadeus מראש
+const axios = require('axios');
 
-// צעיף פשוט לדוגמה
-const searchFlights = async (req, res) => {
-  const { origin, destination, date } = req.body;
-  try {
-    // דוגמה פשוטה לאיך להתחבר ל־Amadeus:
-    const amadeusClient = new amadeus({
-      clientId: process.env.AMADEUS_CLIENT_ID,
-      clientSecret: process.env.AMADEUS_CLIENT_SECRET
-    });
-    const response = await amadeusClient.shopping.flightOffersSearch.get({
-      originLocationCode: origin,
-      destinationLocationCode: destination,
-      departureDate: date,
-      adults: '1'
-    });
-    return res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching flights:', error);
-    return res.status(500).json({ message: 'Error fetching flights' });
-  }
+exports.getFlights = async (req, res) => {
+    const { origin, destination, date } = req.query;
+
+    try {
+        const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', new URLSearchParams({
+            grant_type: 'client_credentials',
+            client_id: process.env.AMADUES_CLIENT_ID,
+            client_secret: process.env.AMADUES_CLIENT_SECRET
+        }));
+
+        const flightsResponse = await axios.get(`https://test.api.amadeus.com/v2/shopping/flight-offers`, {
+            params: { originLocationCode: origin, destinationLocationCode: destination, departureDate: date, adults: 1 },
+            headers: { Authorization: `Bearer ${tokenResponse.data.access_token}` }
+        });
+
+        const flights = flightsResponse.data.data.map(flight => ({
+            ...flight,
+            price: {
+                base: flight.price.total,
+                markup: (flight.price.total * 0.10).toFixed(2),
+                vat: (flight.price.total * 0.18).toFixed(2),
+                total: (flight.price.total * 1.28).toFixed(2)
+            }
+        }));
+
+        res.json(flights);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
-
-module.exports = { searchFlights };
