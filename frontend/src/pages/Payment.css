@@ -1,30 +1,62 @@
 .payment-container {
-  max-width: 500px;
-  margin: auto;
-  background-color: #1a1a1a;
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
+  max-width: 420px;
+  margin: 55px auto 0 auto;
+  background: rgba(28,34,50,0.97);
+  border-radius: 17px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.19);
+  padding: 28px 18px;
+  color: #fff;
 }
-
-.payment-container input {
-  padding: 8px;
-  margin-top: 10px;
+.flight-summary {
+  background: #1a2232;
+  border-radius: 11px;
+  padding: 16px;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.cancellation-policy {
+  margin-bottom: 18px;
+  color: #ffe066;
+  font-size: 1rem;
+}
+.payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.payment-form label {
+  color: #9edcff;
+  margin-bottom: 4px;
+}
+.payment-form input[type="text"], .payment-form input[type="email"] {
   width: 100%;
-  border-radius: 5px;
-}
-
-.pay-btn {
-  margin-top: 15px;
   padding: 10px;
-  width: 100%;
-  background-color: #0099cc;
-  color: white;
+  border-radius: 8px;
   border: none;
-  border-radius: 5px;
+  background: #233149;
+  color: #fff;
+  font-size: 1rem;
 }
-
-.success-msg {
-  margin-top: 15px;
-  color: #00cc66;
+.payment-form button {
+  background: #14b8fc;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 12px 0;
+  font-size: 1.05rem;
+  font-weight: bold;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.payment-form button:disabled {
+  background: #52d0fc;
+}
+.error {
+  color: #ffe066;
+  margin-top: 8px;
+  font-size: 1rem;
 }
