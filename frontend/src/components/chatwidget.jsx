@@ -1,6 +1,9 @@
-// src/components/chatwidget.jsx
+// /frontend/src/components/chatwidget.jsx
 import React, { useState } from "react";
+import axios from "axios";
 import "./chatwidget.css";
+
+const API_URL = "https://tusokvar-demo.onrender.com"; // כתובת ה-backend שלך
 
 const ChatWidget = () => {
   const [open, setOpen] = useState(false);
@@ -8,17 +11,20 @@ const ChatWidget = () => {
     { from: "bot", text: "שלום! איך אפשר לעזור לך היום?" }
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
     setChat([...chat, { from: "user", text: input }]);
     setInput("");
-    setTimeout(() => {
-      setChat((prev) => [
-        ...prev,
-        { from: "bot", text: "נשמע מעולה! צוות טוסו כבר כאן לכל שאלה." }
-      ]);
-    }, 800);
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/chat/ask`, { message: input });
+      setChat((prev) => [...prev, { from: "bot", text: res.data.answer }]);
+    } catch (err) {
+      setChat((prev) => [...prev, { from: "bot", text: "מצטערים, אירעה שגיאה" }]);
+    }
+    setLoading(false);
   };
 
   return (
@@ -32,6 +38,7 @@ const ChatWidget = () => {
             {chat.map((msg, idx) => (
               <div key={idx} className={`chat-msg ${msg.from}`}>{msg.text}</div>
             ))}
+            {loading && <div className="chat-msg bot">...טוען תשובה</div>}
           </div>
           <div className="chatbox-footer">
             <input
@@ -39,8 +46,9 @@ const ChatWidget = () => {
               onChange={e => setInput(e.target.value)}
               placeholder="הקלד הודעה…"
               onKeyDown={e => (e.key === "Enter" && handleSend())}
+              disabled={loading}
             />
-            <button onClick={handleSend}>שלח</button>
+            <button onClick={handleSend} disabled={loading || !input.trim()}>שלח</button>
           </div>
         </div>
       ) : (
