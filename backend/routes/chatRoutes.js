@@ -1,8 +1,8 @@
-// /backend/routes/chatRoutes.js
+// backend/routes/chatRoutes.js
 const express = require('express');
 const router = express.Router();
-const { askGPT } = require('../controllers/chatController');
+const { getChatResponse } = require('../controllers/chatController');
 
-router.post('/ask', askGPT);
+router.post('/', getChatResponse);
 
 module.exports = router;
