@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import "./Home.css"; // ייבוא עיצוב
+import "./Home.css";
 
-const API_URL = "https://tusokvar-demo.onrender.com"; // כתובת הבקאנד שלך
+const API_URL = "https://tusokvar-demo.onrender.com";
 
 export default function Home() {
   const [origin, setOrigin] = useState("");
@@ -12,8 +13,11 @@ export default function Home() {
   const [destinationOptions, setDestinationOptions] = useState([]);
   const [departureDate, setDepartureDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  // שליפת הצעות מוצא
+  // autocomplete מוצא
   const handleOriginChange = async (e) => {
     const value = e.target.value;
     setOrigin(value);
@@ -31,7 +35,7 @@ export default function Home() {
     }
   };
 
-  // שליפת הצעות יעד
+  // autocomplete יעד
   const handleDestinationChange = async (e) => {
     const value = e.target.value;
     setDestination(value);
@@ -49,7 +53,7 @@ export default function Home() {
     }
   };
 
-  // בחירת תאריך יציאה
+  // תאריך יציאה
   const handleDepartureDateChange = (e) => {
     setDepartureDate(e.target.value);
     if (returnDate && e.target.value > returnDate) {
@@ -57,20 +61,30 @@ export default function Home() {
     }
   };
 
-  // בחירת תאריך חזרה
+  // תאריך חזרה
   const handleReturnDateChange = (e) => {
     setReturnDate(e.target.value);
   };
 
-  // שליחה (לחיפוש)
-  const handleSubmit = (e) => {
+  // שליחת חיפוש ל-API והעברה לעמוד תוצאות
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // כאן אפשר לקרוא ל-API לחיפוש טיסות ולנתב לעמוד תוצאות
-    alert(
-      `מוצא: ${origin}, יעד: ${destination}, יציאה: ${departureDate}, חזרה: ${
-        returnDate || "אין"
-      }`
-    );
+    setError("");
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/flights/search`, {
+        origin,
+        destination,
+        departureDate,
+        returnDate
+      });
+      // ניווט עם התוצאות לעמוד תוצאות
+      navigate("/results", { state: { flights: res.data } });
+    } catch (err) {
+      setError("אירעה תקלה בחיפוש טיסות, נסה שנית.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -126,7 +140,10 @@ export default function Home() {
           min={departureDate || format(new Date(), "yyyy-MM-dd")}
         />
 
-        <button type="submit">חפש טיסה</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "טוען..." : "חפש טיסה"}
+        </button>
+        {error && <div style={{ color: "#ffe16b", marginTop: "14px" }}>{error}</div>}
       </form>
     </div>
   );
