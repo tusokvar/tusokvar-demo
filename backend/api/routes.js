@@ -6,10 +6,12 @@ const userRoutes = require('../routes/userRoutes');
 const flightRoutes = require('../routes/flightRoutes');
 const paymentRoutes = require('../routes/paymentRoutes');
 const chatRoutes = require('../routes/chatRoutes');
+const emailRoutes = require('../routes/emailRoutes'); // הוספת שורה זו
 
 router.use('/users', userRoutes);
 router.use('/flights', flightRoutes);
 router.use('/payments', paymentRoutes);
 router.use('/chat', chatRoutes);
+router.use('/email', emailRoutes); // הוספת שורה זו
 
 module.exports = router;
