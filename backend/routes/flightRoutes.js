@@ -1,9 +1,10 @@
-// /backend/routes/flightRoutes.js
+// backend/routes/flightRoutes.js
 const express = require('express');
 const router = express.Router();
-const { autocompleteAirports } = require('../controllers/flightController');
+const { searchFlights, bookFlight } = require('../controllers/flightController');
+const { protect } = require('../middleware/authMiddleware');
 
-// אוטוקומפליט שדות תעופה/ערים
-router.get('/airports/autocomplete', autocompleteAirports);
+router.post('/search', searchFlights);
+router.post('/book', protect, bookFlight);
 
 module.exports = router;
