@@ -17,7 +17,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // autocomplete מוצא
+  // autocomplete מוצא שדות תעופה
   const handleOriginChange = async (e) => {
     const value = e.target.value;
     setOrigin(value);
@@ -66,7 +66,7 @@ export default function Home() {
     setReturnDate(e.target.value);
   };
 
-  // שליחת חיפוש ל-API והעברה לעמוד תוצאות
+  // שליחת טופס חיפוש
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -76,12 +76,12 @@ export default function Home() {
         origin,
         destination,
         departureDate,
-        returnDate
+        returnDate,
       });
-      // ניווט עם התוצאות לעמוד תוצאות
+      // ניווט עם תוצאות לעמוד התוצאות
       navigate("/results", { state: { flights: res.data } });
     } catch (err) {
-      setError("אירעה תקלה בחיפוש טיסות, נסה שנית.");
+      setError("אירעה תקלה בחיפוש טיסות, נסה שוב.");
     } finally {
       setLoading(false);
     }
@@ -95,14 +95,14 @@ export default function Home() {
         <input
           value={origin}
           onChange={handleOriginChange}
-          placeholder="הכנס מוצא (לדוג' TLV)"
+          placeholder='נמל תעופה (למשל "TLV")'
           autoComplete="off"
           list="origin-options"
         />
         <datalist id="origin-options">
           {originOptions.map((opt) => (
             <option key={opt.iataCode} value={opt.iataCode}>
-              {opt.name} ({opt.iataCode}){opt.city ? ` - ${opt.city}` : ""}
+              {opt.name} {opt.city ? " - " + opt.city : ""}
             </option>
           ))}
         </datalist>
@@ -111,14 +111,14 @@ export default function Home() {
         <input
           value={destination}
           onChange={handleDestinationChange}
-          placeholder="הכנס יעד (לדוג' JFK)"
+          placeholder='הזן יעד (למשל "JFK")'
           autoComplete="off"
           list="destination-options"
         />
         <datalist id="destination-options">
           {destinationOptions.map((opt) => (
             <option key={opt.iataCode} value={opt.iataCode}>
-              {opt.name} ({opt.iataCode}){opt.city ? ` - ${opt.city}` : ""}
+              {opt.name} {opt.city ? " - " + opt.city : ""}
             </option>
           ))}
         </datalist>
@@ -128,7 +128,6 @@ export default function Home() {
           type="date"
           value={departureDate}
           onChange={handleDepartureDateChange}
-          min={format(new Date(), "yyyy-MM-dd")}
           required
         />
 
@@ -137,13 +136,14 @@ export default function Home() {
           type="date"
           value={returnDate}
           onChange={handleReturnDateChange}
-          min={departureDate || format(new Date(), "yyyy-MM-dd")}
         />
 
         <button type="submit" disabled={loading}>
-          {loading ? "טוען..." : "חפש טיסה"}
+          {loading ? "טוען טיסות..." : "חפש טיסה"}
         </button>
-        {error && <div style={{ color: "#ffe16b", marginTop: "14px" }}>{error}</div>}
+        {error && (
+          <div style={{ color: "#ffe16b", marginTop: "14px" }}>{error}</div>
+        )}
       </form>
     </div>
   );
