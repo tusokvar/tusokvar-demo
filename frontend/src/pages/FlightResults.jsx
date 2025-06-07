@@ -85,7 +85,7 @@ const FlightSearch = () => {
                   setOriginSuggestions([]);
                 }}
               >
-                {s.iataCode} – {s.name} {s.city && (${s.city})}
+                {s.iataCode} – {s.name} {s.city && `(${s.city})`}
               </div>
             ))}
           </div>
