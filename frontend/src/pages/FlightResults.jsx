@@ -1,105 +1,170 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config";
-import "./FlightResults.css";
+import "./FlightSearch.css";
 
-const FlightResults = () => {
-  const [flights, setFlights] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [sortKey, setSortKey] = useState("total");
-  const [error, setError] = useState("");
+const FlightSearch = () => {
+  const [origin, setOrigin] = useState("");
+  const [destination, setDestination] = useState("");
+  const [departureDate, setDepartureDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
+  const [passengers, setPassengers] = useState(1);
+  const [originSuggestions, setOriginSuggestions] = useState([]);
+  const [destSuggestions, setDestSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const search = JSON.parse(localStorage.getItem("flight-search"));
-    if (!search) {
-      navigate("/");
+  // אוטוקומפליט ליעדים
+  const fetchSuggestions = async (query, setter) => {
+    if (!query || query.length < 2) {
+      setter([]);
       return;
     }
-    fetchFlights(search);
-    // eslint-disable-next-line
-  }, [navigate]);
-
-  const fetchFlights = async ({ origin, destination, date }) => {
-    setLoading(true);
-    setError("");
     try {
-      const res = await axios.get(`${API_URL}/flights`, {
-        params: { origin, destination, date },
+      const res = await axios.get(`${API_URL}/flights/airports/autocomplete`, {
+        params: { keyword: query },
       });
-      setFlights(res.data.flights || []);
-      if (!res.data.flights || res.data.flights.length === 0) {
-        setError("לא נמצאו טיסות בתאריכים שביקשת. נסה לחפש שוב.");
-      }
-    } catch (err) {
-      setError("אירעה שגיאה בעת חיפוש הטיסות. נסה שנית.");
+      setter(res.data.data || []);
+    } catch (e) {
+      setter([]);
+    }
+  };
+
+  const onSearch = async (e) => {
+    e.preventDefault();
+    setErr("");
+    if (!origin || !destination || !departureDate) {
+      setErr("נא למלא את כל השדות הנדרשים.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const search = {
+        origin,
+        destination,
+        date: departureDate,
+        returnDate,
+        passengers,
+      };
+      localStorage.setItem("flight-search", JSON.stringify(search));
+      navigate("/results");
+    } catch (error) {
+      setErr("אירעה תקלה. נסה שוב.");
     }
     setLoading(false);
   };
 
-  const handleSort = (key) => {
-    setSortKey(key);
-    setFlights((prevFlights) => {
-      const sorted = [...prevFlights];
-      if (key === "total") {
-        sorted.sort((a, b) => a.price.total - b.price.total);
-      }
-      if (key === "airline") {
-        sorted.sort((a, b) =>
-          a.itineraries[0].segments[0].carrierCode.localeCompare(
-            b.itineraries[0].segments[0].carrierCode
-          )
-        );
-      }
-      return sorted;
-    });
-  };
-
-  const handleSelectFlight = (flight) => {
-    localStorage.setItem("selected-flight", JSON.stringify(flight));
-    navigate("/payment");
-  };
-
   return (
-    <div className="results-container">
-      <div className="results-box">
-        <h2 className="results-title">תוצאות חיפוש טיסות</h2>
-        <div className="results-sort">
-          <span>מיין לפי:</span>
-          <button className="sort-btn" onClick={() => handleSort("total")}>מחיר</button>
-          <button className="sort-btn" onClick={() => handleSort("airline")}>חברת תעופה</button>
-        </div>
-        {loading ? (
-          <div className="results-loading">...טוען תוצאות</div>
-        ) : error ? (
-          <div className="results-error">{error}</div>
-        ) : (
-          <div className="flights-list">
-            {flights.map((flight, idx) => (
-              <div className="flight-card" key={idx}>
-                <div>
-                  <strong>
-                    {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
-                  </strong>
-                </div>
-                <span className="airline">{flight.itineraries[0].segments[0].carrierCode}</span>
-                <div className="price">
-                  מחיר כולל: <b>{Number(flight.price.total).toLocaleString()} ₪</b>
-                </div>
-                <small className="small-info">
-                  דמי טיפול: {Number(flight.price.vat).toLocaleString()} ₪
-                </small>
-                <button className="select-btn" onClick={() => handleSelectFlight(flight)}>
-                  אישור ובחירת טיסה
-                </button>
+    <div className="search-container">
+      <form className="search-box" onSubmit={onSearch}>
+        <h2>טוסו כבר – חיפוש טיסות</h2>
+
+        <label htmlFor="origin">מוצא:</label>
+        <input
+          id="origin"
+          type="text"
+          value={origin}
+          onChange={e => {
+            setOrigin(e.target.value.toUpperCase());
+            fetchSuggestions(e.target.value, setOriginSuggestions);
+          }}
+          autoComplete="off"
+          placeholder="TLV"
+          required
+        />
+        {originSuggestions.length > 0 && (
+          <div className="suggestions">
+            {originSuggestions.map((s, idx) => (
+              <div
+                key={idx}
+                className="suggestion"
+                onClick={() => {
+                  setOrigin(s.iataCode);
+                  setOriginSuggestions([]);
+                }}
+              >
+                {s.iataCode} – {s.name} {s.city && (${s.city})}
               </div>
             ))}
           </div>
         )}
-      </div>
+
+        <label htmlFor="destination">יעד:</label>
+        <input
+          id="destination"
+          type="text"
+          value={destination}
+          onChange={e => {
+            setDestination(e.target.value.toUpperCase());
+            fetchSuggestions(e.target.value, setDestSuggestions);
+          }}
+          autoComplete="off"
+          placeholder="JFK"
+          required
+        />
+        {destSuggestions.length > 0 && (
+          <div className="suggestions">
+            {destSuggestions.map((s, idx) => (
+              <div
+                key={idx}
+                className="suggestion"
+                onClick={() => {
+                  setDestination(s.iataCode);
+                  setDestSuggestions([]);
+                }}
+              >
+                {s.iataCode} – {s.name} {s.city && (${s.city})}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <label htmlFor="departureDate">תאריך יציאה:</label>
+        <input
+          id="departureDate"
+          type="date"
+          value={departureDate}
+          onChange={e => setDepartureDate(e.target.value)}
+          required
+          min="2024-07-01"
+          max="2024-09-30"
+        />
+
+        <label htmlFor="returnDate">תאריך חזרה (אופציונלי):</label>
+        <input
+          id="returnDate"
+          type="date"
+          value={returnDate}
+          onChange={e => setReturnDate(e.target.value)}
+          min="2024-07-01"
+          max="2024-09-30"
+        />
+
+        <label htmlFor="passengers">מספר נוסעים:</label>
+        <input
+          id="passengers"
+          type="number"
+          min={1}
+          max={9}
+          value={passengers}
+          onChange={e => setPassengers(Number(e.target.value))}
+          required
+        />
+
+        {err && <div className="search-error">{err}</div>}
+
+        <button type="submit" className="search-btn" disabled={loading}>
+          {loading ? "מחפש..." : "חפש טיסה"}
+        </button>
+
+        <div style={{ color: "#fff", marginTop: "12px", fontSize: "0.98rem", opacity: 0.8 }}>
+          <b>טיפ לבדיקה:</b> במצב בדיקות (Sandbox) יש לבחור <u>תאריכים בין יולי לספטמבר 2024 בלבד</u>.
+        </div>
+      </form>
     </div>
   );
 };
 
-export default FlightResults;
+export default FlightSearch;
