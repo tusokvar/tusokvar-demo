@@ -1,4 +1,3 @@
-// frontend/src/pages/FlightResults.jsx
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
@@ -25,7 +24,7 @@ const FlightResults = () => {
     fetchFlights();
   }, [state]);
 
-  if (loading) return <div className="loading">טוען תוצאות...</div>;
+  if (loading) return <div>טוען תוצאות...</div>;
 
   return (
     <div className="results-container">
