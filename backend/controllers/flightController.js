@@ -1,27 +1,17 @@
-// backend/controllers/flightController.js
-const Amadeus = require('amadeus');
+// backend/controllers/paymentController.js
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const amadeus = new Amadeus({
-  clientId: process.env.AMADEUS_CLIENT_ID,
-  clientSecret: process.env.AMADEUS_CLIENT_SECRET
-});
-
-exports.searchFlights = async (req, res) => {
-  const { origin, destination, departureDate, returnDate, adults } = req.body;
+exports.processPayment = async (req, res) => {
+  const { amount, currency, paymentMethodId } = req.body;
   try {
-    const response = await amadeus.shopping.flightOffersSearch.get({
-      originLocationCode: origin,
-      destinationLocationCode: destination,
-      departureDate,
-      returnDate,
-      adults,
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency,
+      payment_method: paymentMethodId,
+      confirm: true,
     });
-    res.json(response.data);
+    res.json({ success: true, paymentIntent });
   } catch (err) {
-    res.status(500).json({ error: err.description || err.message });
+    res.status(500).json({ error: err.message });
   }
-};
-
-exports.bookFlight = async (req, res) => {
-  res.json({ msg: 'Booking logic goes here.' });
 };
