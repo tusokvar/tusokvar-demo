@@ -1,36 +1,54 @@
-/* src/pages/FlightResults.css */
-.results-container {
-  padding: 20px;
-  background-color: #212529;
-  color: #ffffff;
-  min-height: 100vh;
-}
+// src/pages/FlightResults.jsx
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import api from '../utils/api';
+import './FlightResults.css';
 
-.flight-card {
-  background-color: #2c3136;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
+const FlightResults = () => {
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-.flight-card p {
-  margin: 0;
-}
+  useEffect(() => {
+    const fetchFlights = async () => {
+      try {
+        const res = await api.post('/flights/search', state);
+        setFlights(res.data);
+      } catch (error) {
+        console.error('Error fetching flights:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-.flight-card button {
-  padding: 8px 12px;
-  background-color: #72dfff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #212529;
-  font-weight: bold;
-}
+    fetchFlights();
+  }, [state]);
 
-.flight-card button:hover {
-  background-color: #ffd966;
-}
+  if (loading) return <div>טוען תוצאות...</div>;
+
+  return (
+    <div className="results-container">
+      {flights.length === 0 ? (
+        <p>לא נמצאו טיסות מתאימות.</p>
+      ) : (
+        flights.map((flight, idx) => (
+          <div key={idx} className="flight-card">
+            <p>
+              {flight.itineraries[0].segments[0].departure.iataCode} →
+              {flight.itineraries[0].segments[0].arrival.iataCode}
+            </p>
+            <p>
+              מחיר: {flight.price.total} {flight.price.currency}
+            </p>
+            <button onClick={() => navigate('/booking', { state: { flight } })}>
+              הזמן עכשיו
+            </button>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
+
+export default FlightResults;
