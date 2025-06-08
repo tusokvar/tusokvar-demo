@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import api from '../utils/api';
 
 const CheckoutForm = ({ amount }) => {
@@ -9,30 +9,35 @@ const CheckoutForm = ({ amount }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!stripe || !elements) return;
+    if (!stripe || !elements) {
+      return;
+    }
 
     const cardElement = elements.getElement(CardElement);
 
-    const { paymentMethod, error } = await stripe.createPaymentMethod({
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
       type: 'card',
       card: cardElement,
     });
 
     if (error) {
-      console.error(error);
+      console.error("Stripe Elements Error:", error);
       return;
     }
 
-    // שליחת התשלום לשרת
-    const response = await api.post('/payments', {
-      paymentMethodId: paymentMethod.id,
-      amount,
-    });
+    try {
+      const response = await api.post('/payments', {
+        amount,
+        paymentMethodId: paymentMethod.id, // זה ה-ID הנדרש
+      });
 
-    if (response.data.success) {
-      alert('התשלום בוצע בהצלחה!');
-    } else {
-      alert('אירעה תקלה בתשלום');
+      if (response.data.success) {
+        alert("התשלום הצליח!");
+      } else {
+        alert("התשלום נכשל: " + response.data.error);
+      }
+    } catch (err) {
+      console.error("Server Error:", err);
     }
   };
 
