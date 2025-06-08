@@ -10,6 +10,7 @@ exports.processPayment = async (req, res) => {
             currency: 'usd',
             payment_method: token,
             confirm: true,
+            automatic_payment_methods: { enabled: true },
             return_url: "https://tusokvar-demo-1.onrender.com/",
         });
 
