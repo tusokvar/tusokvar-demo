@@ -1,4 +1,4 @@
-// frontend/src/components/ChatWidget.jsx
+// frontend/src/components/chatwidget.jsx
 import { useState } from 'react';
 import api from '../utils/api';
 
