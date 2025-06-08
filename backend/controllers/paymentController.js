@@ -10,7 +10,7 @@ exports.processPayment = async (req, res) => {
             confirm: true,
             payment_method: "pm_card_visa",
             automatic_payment_methods: { enabled: true },
-            return_url: "https://tusokvar-demo-1.onrender.com/",
+            return_url: "https://tusokvar-demo-1.onrender.com",
         });
 
         res.json(paymentIntent);
