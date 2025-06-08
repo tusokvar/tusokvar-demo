@@ -1,16 +1,23 @@
+// backend/middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
-exports.protect = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) return res.status(401).json({ message: 'Not authorized' });
+exports.protect = async (req, res, next) => {
+  let token;
 
-    const token = authHeader.split(' ')[1];
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (error) {
-        res.status(401).json({ message: 'Token is invalid' });
-    }
+  if (!token) {
+    return res.status(401).json({ msg: 'Not authorized, no token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id).select('-password');
+    next();
+  } catch (error) {
+    res.status(401).json({ msg: 'Token is not valid' });
+  }
 };
