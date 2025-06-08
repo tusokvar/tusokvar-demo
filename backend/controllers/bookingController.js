@@ -1,21 +1,33 @@
 // backend/controllers/bookingController.js
-/**
- * לוגיקה לדוגמה ליצירת booking
- * ניתן להוסיף שמירת Booking במסד אם נבנה מודל מתאים
- */
-const createBooking = async (req, res) => {
-  const { userId, flightOffer, amount } = req.body;
+const Booking = require('../models/booking');
+
+exports.createBooking = async (req, res) => {
+  const { user, flightDetails, passengers, totalPrice, currency, amadeusBookingId } = req.body;
 
   try {
-    // דוגמה פשוטה – נניח שיש לך לוגיקה לשמירת booking במסד
-    // const booking = await Booking.create({ user: userId, flight: flightOffer, amount });
-    // return res.status(201).json(booking);
+    const booking = new Booking({
+      user,
+      flightDetails,
+      passengers,
+      totalPrice,
+      currency,
+      amadeusBookingId,
+      paymentStatus: 'completed'
+    });
 
-    return res.json({ message: 'Booking created successfully (דוגמה)', data: { userId, flightOffer, amount } });
-  } catch (error) {
-    console.error('Error creating booking:', error);
-    return res.status(500).json({ message: 'Error creating booking' });
+    await booking.save();
+
+    res.status(201).json({ success: true, booking });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { createBooking };
+exports.getBookingsByUser = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ user: req.user.id });
+    res.json(bookings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
