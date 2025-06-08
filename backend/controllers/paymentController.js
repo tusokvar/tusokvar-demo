@@ -6,10 +6,10 @@ exports.processPayment = async (req, res) => {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100),
-      currency: 'eur', // שים לב לשינוי ל־EUR
+      currency: 'eur',
       payment_method: paymentMethodId,
-      confirmation_method: 'automatic',
       confirm: true,
+      automatic_payment_methods: { enabled: true },
     });
 
     res.json({ success: true, paymentIntent });
