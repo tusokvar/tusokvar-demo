@@ -1,10 +1,11 @@
-// frontend/src/App.jsx
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import FlightSearch from './pages/FlightSearch';
 import FlightResults from './pages/FlightResults';
-import Booking from './pages/Booking';
 import Payment from './pages/Payment';
-import ChatWidget from './components/ChatWidget';
+import Booking from './pages/Booking';
+import ChatWidget from './components/chatwidget';
 
 function App() {
   return (
@@ -12,9 +13,10 @@ function App() {
       <ChatWidget />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/search" element={<FlightSearch />} />
         <Route path="/results" element={<FlightResults />} />
-        <Route path="/booking" element={<Booking />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/booking" element={<Booking />} />
       </Routes>
     </Router>
   );
