@@ -1,0 +1,28 @@
+/* src/pages/Home.css */
+.home-container {
+  background: #212529;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.home-container input, .home-container button {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 6px;
+  border: none;
+}
+
+.home-container button {
+  background-color: #72dfff;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.home-container button:hover {
+  background-color: #ffd966;
+}
