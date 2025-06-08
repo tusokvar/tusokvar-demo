@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import './FlightResults.css';
 
-const FlightResults = () => {
-  const { state } = useLocation();
+const FlightResults = ({ state }) => {
+  //const { state } = useLocation();
   const navigate = useNavigate();
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(true);
