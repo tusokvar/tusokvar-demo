@@ -1,6 +1,7 @@
 // frontend/src/components/chatwidget.jsx
 import { useState } from 'react';
 import api from '../utils/api';
+import './chatwidget.css';  // <--- הוספה זו
 
 const ChatWidget = () => {
   const [message, setMessage] = useState('');
@@ -24,7 +25,7 @@ const ChatWidget = () => {
         placeholder="שאל על טיסות ונופש"
       />
       <button onClick={sendMessage}>שלח</button>
-      <div>{response}</div>
+      {response && <div>{response}</div>}
     </div>
   );
 };
