@@ -1,4 +1,4 @@
-// backend/controllers/emailController.js
+// backend/controllers/emailService.js
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
@@ -11,9 +11,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-exports.sendBookingConfirmation = async (req, res) => {
-  const { to, subject, html } = req.body;
-
+exports.sendEmail = async (to, subject, html) => {
   const mailOptions = {
     from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`,
     to,
@@ -23,8 +21,8 @@ exports.sendBookingConfirmation = async (req, res) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    res.json({ success: true, msg: 'Email sent successfully' });
+    return { success: true };
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    throw new Error(err.message);
   }
 };
