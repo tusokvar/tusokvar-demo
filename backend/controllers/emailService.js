@@ -1,18 +1,30 @@
+// backend/controllers/emailController.js
 const nodemailer = require('nodemailer');
 
-exports.sendEmail = async (to, subject, text) => {
-    const transporter = nodemailer.createTransport({
-        service: process.env.EMAIL_SERVICE,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+});
 
-    await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to,
-        subject,
-        text
-    });
+exports.sendBookingConfirmation = async (req, res) => {
+  const { to, subject, html } = req.body;
+
+  const mailOptions = {
+    from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`,
+    to,
+    subject,
+    html
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.json({ success: true, msg: 'Email sent successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
