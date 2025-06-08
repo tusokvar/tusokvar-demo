@@ -1,6 +1,7 @@
-// frontend/src/pages/Booking.jsx
+// src/pages/Booking.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import './Booking.css';
 
 const Booking = () => {
   const { state } = useLocation();
@@ -27,9 +28,25 @@ const Booking = () => {
   return (
     <div className="booking-container">
       <form onSubmit={handleSubmit}>
-        <input name="fullName" placeholder="שם מלא באנגלית" required onChange={handleChange} />
-        <input name="phone" placeholder="טלפון" required onChange={handleChange} />
-        <input name="email" type="email" placeholder="אימייל" required onChange={handleChange} />
+        <input
+          name="fullName"
+          placeholder="שם מלא באנגלית"
+          required
+          onChange={handleChange}
+        />
+        <input
+          name="phone"
+          placeholder="טלפון"
+          required
+          onChange={handleChange}
+        />
+        <input
+          name="email"
+          type="email"
+          placeholder="אימייל"
+          required
+          onChange={handleChange}
+        />
         <button type="submit">המשך לתשלום</button>
       </form>
     </div>
