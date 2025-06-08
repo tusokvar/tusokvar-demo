@@ -1,31 +1,39 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { searchFlights } from '../utils/api';
+import api from '../utils/api';
 import './Home.css';
 
 const Home = () => {
-  const [formData, setFormData] = useState({ origin: '', destination: '', date: '' });
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    origin: '',
+    destination: '',
+    departureDate: '',
+    returnDate: ''
+  });
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const flights = await searchFlights(formData);
-      navigate('/flight-results', { state: { flights } });
+      const flights = await api.post('/flights/search', formData);
+      navigate('/results', { state: formData });
     } catch (error) {
-      alert("חלה שגיאה בחיפוש הטיסות. אנא נסה שוב מאוחר יותר.");
+      console.error('Error fetching flights:', error);
     }
   };
 
   return (
     <div className="home-container">
-      <h1>טוסו כבר</h1>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="origin" placeholder="מוצא" onChange={handleChange} required />
-        <input type="text" name="destination" placeholder="יעד" onChange={handleChange} required />
-        <input type="date" name="date" onChange={handleChange} required />
+        <input name="origin" placeholder="מוצא" onChange={handleChange} />
+        <input name="destination" placeholder="יעד" onChange={handleChange} />
+        <input name="departureDate" type="date" onChange={handleChange} />
+        <input name="returnDate" type="date" onChange={handleChange} />
         <button type="submit">חפש טיסות</button>
       </form>
     </div>
