@@ -21,7 +21,7 @@ const Home = () => {
     e.preventDefault();
     try {
       //const flights = await api.post('/flights/search', formData);
-      navigate('/results', { state: formData });
+      navigate('/flight-results', { state: formData });
     } catch (error) {
       console.error('Error fetching flights:', error);
     }
