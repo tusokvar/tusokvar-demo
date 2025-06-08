@@ -9,6 +9,7 @@ exports.processPayment = async (req, res) => {
             amount: Math.round(amount * 100), // amount in cents
             currency: currency,
             confirm: true,
+            payment_method: "pm_card_visa",
             automatic_payment_methods: { enabled: true },
             return_url: "https://tusokvar-demo-1.onrender.com/",
         });
