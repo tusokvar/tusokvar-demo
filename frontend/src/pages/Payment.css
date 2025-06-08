@@ -1,5 +1,5 @@
-/* src/pages/Payment.css */
-.payment-container {
+/* src/pages/Home.css */
+.home-container {
   background-color: #212529;
   color: #fff;
   min-height: 100vh;
@@ -7,22 +7,45 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.payment-container h2 {
-  margin-bottom: 15px;
+.home-title {
+  margin-bottom: 20px;
+  font-size: 2.5rem;
 }
 
-.payment-container button {
-  padding: 12px 20px;
+.search-form {
+  background-color: #2c3136;
+  border-radius: 12px;
+  padding: 25px;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.search-form input {
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+}
+
+.search-form button {
+  padding: 12px;
   background-color: #72dfff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   color: #212529;
   font-weight: bold;
+  transition: background-color 0.3s;
 }
 
-.payment-container button:hover {
+.search-form button:hover {
   background-color: #ffd966;
 }
