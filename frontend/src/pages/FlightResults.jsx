@@ -3,12 +3,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import './FlightResults.css';
 
-const FlightResults = ({ state }) => {
-  //const { state } = useLocation();
+const FlightResults = (props) => {
+  const { state } = useLocation();
   const navigate = useNavigate();
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  console.log(props);
+  console.log(state);
   useEffect(() => {
     const fetchFlights = async () => {
       try {
