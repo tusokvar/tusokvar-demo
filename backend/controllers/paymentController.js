@@ -9,7 +9,7 @@ exports.processPayment = async (req, res) => {
             currency: currency,
             confirm: true,
             payment_method: "pm_card_visa",
-            automatic_payment_methods: { enabled: true },
+            automatic_payment_methods: { enabled: true, allow_redirects: "never" },
             //return_url: "https://tusokvar-demo-1.onrender.com",
         });
 
