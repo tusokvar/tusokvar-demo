@@ -2,6 +2,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.processPayment = async (req, res) => {
     const { amount, token } = req.body;
+    console.log(process.env.STRIPE_SECRET_KEY);
 
     try {
         const paymentIntent = await stripe.paymentIntents.create({
