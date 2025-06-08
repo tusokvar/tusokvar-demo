@@ -6,7 +6,7 @@ import CheckoutForm from '../components/CheckoutForm';
 import { useLocation } from 'react-router-dom';
 import './Payment.css';
 
-const stripePromise = loadStripe("pk_test_51RWDoqPqIZi53O4hG9Is3syaykmB6hNKosGn8xpA1TVGwFackOPwFE9FRAk6HVwgdBJ8WJPnz2o6sxBoPDA4FXQc00DZoVsh1T");
+const stripePromise = loadStripe("import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY");
 
 const Payment = () => {
   const location = useLocation();
