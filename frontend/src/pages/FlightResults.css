@@ -1,54 +1,52 @@
-// src/pages/FlightResults.jsx
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import api from '../utils/api';
-import './FlightResults.css';
+/* frontend/src/pages/FlightResults.css */
 
-const FlightResults = () => {
-  const { state } = useLocation();
-  const navigate = useNavigate();
-  const [flights, setFlights] = useState([]);
-  const [loading, setLoading] = useState(true);
+.results-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #1a1a1a;
+  padding: 30px;
+  min-height: 100vh;
+}
 
-  useEffect(() => {
-    const fetchFlights = async () => {
-      try {
-        const res = await api.post('/flights/search', state);
-        setFlights(res.data);
-      } catch (error) {
-        console.error('Error fetching flights:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+.flight-card {
+  background-color: #2b2b2b;
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
 
-    fetchFlights();
-  }, [state]);
+.flight-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
 
-  if (loading) return <div>טוען תוצאות...</div>;
+.flight-card p {
+  font-size: 1.2rem;
+  margin: 8px 0;
+}
 
-  return (
-    <div className="results-container">
-      {flights.length === 0 ? (
-        <p>לא נמצאו טיסות מתאימות.</p>
-      ) : (
-        flights.map((flight, idx) => (
-          <div key={idx} className="flight-card">
-            <p>
-              {flight.itineraries[0].segments[0].departure.iataCode} →
-              {flight.itineraries[0].segments[0].arrival.iataCode}
-            </p>
-            <p>
-              מחיר: {flight.price.total} {flight.price.currency}
-            </p>
-            <button onClick={() => navigate('/booking', { state: { flight } })}>
-              הזמן עכשיו
-            </button>
-          </div>
-        ))
-      )}
-    </div>
-  );
-};
+.flight-card button {
+  background-color: #ffd700;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 
-export default FlightResults;
+.flight-card button:hover {
+  background-color: #72dfff;
+  color: #1a1a1a;
+}
