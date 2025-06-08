@@ -34,7 +34,7 @@ exports.searchFlights = async (req, res) => {
     res.json(processedFlights);
 
   } catch (error) {
-    console.error('Amadeus API error:', error.response?.data || error.message);
+    console.error('Amadeus API error:', error); //error.response?.data || error.message);
     const errorMessage = error.response?.data?.errors?.[0]?.detail || error.message;
     res.status(500).json({ error: errorMessage });
   }
