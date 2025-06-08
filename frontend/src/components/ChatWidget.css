@@ -1,0 +1,22 @@
+/* src/components/ChatWidget.css */
+.chat-widget {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  background-color: #72dfff;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.chat-widget input, .chat-widget button {
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: none;
+}
+
+.chat-widget button {
+  background: #ffd966;
+  cursor: pointer;
+}
