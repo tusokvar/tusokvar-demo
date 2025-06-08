@@ -5,7 +5,7 @@ import FlightSearch from './pages/FlightSearch';
 import FlightResults from './pages/FlightResults';
 import Payment from './pages/Payment';
 import Booking from './pages/Booking';
-import ChatWidget from './components/chatwidget';
+import ChatWidget from './components/ChatWidget';
 
 function App() {
   return (
