@@ -9,7 +9,8 @@ exports.processPayment = async (req, res) => {
             amount: Math.round(amount * 100), // amount in cents
             currency: 'usd',
             payment_method: token,
-            confirm: true
+            confirm: true,
+            automatic_payment_methods: {enabled: true, allow_redirects: "never"}
         });
 
         res.json(paymentIntent);
