@@ -1,5 +1,6 @@
 // backend/controllers/flightController.js
 const Amadeus = require('amadeus');
+const { calculateFinalPrice } = require('../utils/utils');
 
 const amadeus = new Amadeus({
   clientId: process.env.AMADEUS_CLIENT_ID,
@@ -22,9 +23,19 @@ exports.searchFlights = async (req, res) => {
       adults: 1,
     });
 
-    res.json(response.data);
+    const processedFlights = response.data.map(offer => ({
+      ...offer,
+      price: {
+        ...offer.price,
+        total: calculateFinalPrice(parseFloat(offer.price.total)),
+      }
+    }));
+
+    res.json(processedFlights);
+
   } catch (error) {
     console.error('Amadeus API error:', error.response?.data || error.message);
-    res.status(500).json({ error: error.response?.data || error.message });
+    const errorMessage = error.response?.data?.errors?.[0]?.detail || error.message;
+    res.status(500).json({ error: errorMessage });
   }
 };
