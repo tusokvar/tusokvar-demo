@@ -1,0 +1,28 @@
+/* src/pages/Payment.css */
+.payment-container {
+  background-color: #212529;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-container h2 {
+  margin-bottom: 15px;
+}
+
+.payment-container button {
+  padding: 12px 20px;
+  background-color: #72dfff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #212529;
+  font-weight: bold;
+}
+
+.payment-container button:hover {
+  background-color: #ffd966;
+}
