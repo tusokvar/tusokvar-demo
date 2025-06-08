@@ -1,13 +1,13 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.processPayment = async (req, res) => {
-    const { amount, cur } = req.body;
+    const { amount, currency } = req.body;
     console.log(process.env.STRIPE_SECRET_KEY);
 
     try {
         const paymentIntent = await stripe.paymentIntents.create({
             amount: Math.round(amount * 100), // amount in cents
-            currency: cur,
+            currency: currency,
             confirm: true,
             automatic_payment_methods: { enabled: true },
             return_url: "https://tusokvar-demo-1.onrender.com/",
