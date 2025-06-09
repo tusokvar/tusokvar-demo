@@ -16,6 +16,7 @@ const App = () => (
       <Route path="/payment" element={<Payment />} />
       <Route path="/booking" element={<Booking />} />
       <Route path="/flight-search" element={<FlightSearch />} />
+      <Route path="/payment-success" element={<PaymentSuccess />} />
     </Routes>
   </Router>
 );
