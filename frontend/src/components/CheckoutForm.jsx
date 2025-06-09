@@ -1,54 +1,40 @@
-import React from 'react';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import axios from 'axios';
-import { BACKEND_URI } from '../utils/config';
+const handleSubmit = async (event) => {
+  event.preventDefault();
 
-const CheckoutForm = ({ amount }) => {
-  const stripe = useStripe();
-  const elements = useElements();
+  if (!stripe || !elements) return;
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const cardElement = elements.getElement(CardElement);
 
-    if (!stripe || !elements) return;
+  const { error, paymentMethod } = await stripe.createPaymentMethod({
+    type: 'card',
+    card: cardElement,
+  });
 
-    const cardElement = elements.getElement(CardElement);
+  if (error) {
+    console.error('Stripe error:', error);
+    return;
+  }
 
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: 'card',
-      card: cardElement,
+  try {
+    const response = await axios.post(`${BACKEND_URI}/api/payments`, {
+      amount,
+      paymentMethodId: paymentMethod.id,
     });
 
-    if (error) {
-      console.error('Stripe error:', error);
+    const { clientSecret } = response.data;
+
+    const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(clientSecret);
+
+    if (confirmError) {
+      console.error('Confirm Card Payment Error:', confirmError);
       return;
     }
 
-    try {
-      const response = await axios.post(`${BACKEND_URI}/payments`, {
-        amount,
-        paymentMethodId: paymentMethod.id,
-      });
-
-      if (response.data.success) {
-        console.log('התשלום בוצע בהצלחה:', response.data.paymentIntent);
-        window.location.href = '/payment-success'; 
-      } else {
-        console.error('התשלום נכשל:', response.data.error);
-      }
-    } catch (error) {
-      console.error('Server Error:', error);
+    if (paymentIntent.status === 'succeeded') {
+      window.location.href = '/payment-success';
     }
-  };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <CardElement />
-      <button type="submit" disabled={!stripe}>
-        שלם עכשיו
-      </button>
-    </form>
-  );
+  } catch (error) {
+    console.error('Server Error:', error);
+  }
 };
-
-export default CheckoutForm;
