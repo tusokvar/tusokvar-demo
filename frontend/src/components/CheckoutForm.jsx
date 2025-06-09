@@ -1,6 +1,7 @@
 import React from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import api from '../utils/api';
+import axios from 'axios';
+import { BACKEND_URI } from '../utils/config';
 
 const CheckoutForm = ({ amount }) => {
   const stripe = useStripe();
@@ -19,19 +20,24 @@ const CheckoutForm = ({ amount }) => {
     });
 
     if (error) {
-      console.error(error);
+      console.error('Stripe error:', error);
       return;
     }
 
-    const response = await api.post('/payments', {
-      amount,
-      paymentMethodId: paymentMethod.id,
-    });
+    try {
+      const response = await axios.post(`${BACKEND_URI}/payments`, {
+        amount,
+        paymentMethodId: paymentMethod.id,
+      });
 
-    if (response.data.success) {
-      console.log('התשלום בוצע בהצלחה!', response.data.paymentIntent);
-    } else {
-      console.error('התשלום נכשל:', response.data.error);
+      if (response.data.success) {
+        console.log('התשלום בוצע בהצלחה:', response.data.paymentIntent);
+        window.location.href = '/payment-success'; 
+      } else {
+        console.error('התשלום נכשל:', response.data.error);
+      }
+    } catch (error) {
+      console.error('Server Error:', error);
     }
   };
 
