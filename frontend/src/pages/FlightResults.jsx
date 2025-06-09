@@ -34,9 +34,9 @@ const FlightResults = () => {
             {flight.itineraries[0].segments[0].arrival.iataCode}
           </p>
           <p>מחיר: {flight.price.total} {flight.price.currency}</p>
-          <button onClick={() => navigate('/booking', { state: { flight } })}>
-            הזמן עכשיו
-          </button>
+         <button onClick={() => navigate('/payment', { state: { amount: parseFloat(flight.price.total), flight } })}>
+  הזמן עכשיו
+</button>
         </div>
       ))}
     </div>
