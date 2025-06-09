@@ -4,17 +4,13 @@ exports.processPayment = async (req, res) => {
   const { amount, paymentMethodId } = req.body;
 
   try {
- const paymentIntent = await stripe.paymentIntents.create({
+ await stripe.paymentIntents.create({
   amount: Math.round(amount * 100),
   currency: 'eur',
   payment_method: paymentMethodId,
   confirmation_method: 'automatic',
   confirm: true,
-  return_url: 'https://tusokvar-demo-1.onrender.com/payment-success',
-  automatic_payment_methods: {
-    enabled: true,
-    allow_redirects: 'always' // יאפשר ל־Stripe לבצע Redirect במידה ודרוש אימות נוסף
-  }
+  return_url: "https://tusokvar-demo-1.onrender.com/payment-success",
 });
     res.json({ success: true, paymentIntent });
   } catch (error) {
