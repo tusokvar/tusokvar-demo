@@ -8,6 +8,7 @@ const FlightResults = () => {
   const navigate = useNavigate();
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchFlights = async () => {
       try {
@@ -34,9 +35,18 @@ const FlightResults = () => {
             {flight.itineraries[0].segments[0].arrival.iataCode}
           </p>
           <p>מחיר: {flight.price.total} {flight.price.currency}</p>
-         <button onClick={() => navigate('/payment', { state: { amount: parseFloat(flight.price.total), flight } })}>
-  הזמן עכשיו
-</button>
+          <button
+            onClick={() =>
+              navigate('/payment', {
+                state: {
+                  flight,
+                  amount: parseFloat(flight.price.total),
+                },
+              })
+            }
+          >
+            הזמן עכשיו
+          </button>
         </div>
       ))}
     </div>
