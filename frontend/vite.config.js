@@ -15,7 +15,10 @@ export default defineConfig({
       },
     },
   },
-  // שלב חשוב: כולל את הקובץ _redirects בפלט
+  server: {
+    historyApiFallback: true, // ✅ זה מה שמאפשר ל-Vite להחזיר index.html בכל נתיב
+  },
+  // כולל את הקובץ _redirects בפלט build
   writeBundle() {
     const redirectsSrc = resolve(__dirname, 'public/_redirects');
     const redirectsDest = resolve(__dirname, 'dist/_redirects');
