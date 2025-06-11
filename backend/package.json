@@ -14,6 +14,7 @@
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
-    "amadeus": "^10.0.0"
+    "amadeus": "^10.0.0",
+    "openai": "^4.50.0"
   }
 }
