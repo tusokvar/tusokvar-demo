@@ -42,7 +42,10 @@ const Payment = () => {
       <h2>סיכום הזמנה 💳</h2>
 
       <div className="summary-box">
-        <span className="total-amount">{amount.toFixed(2)} {currency}</span>
+        <div className="summary-item">
+          <span>סכום לתשלום:</span>
+          <span className="total-amount">{amount.toFixed(2)} {currency}</span>
+        </div>
       </div>
 
       <div className="payment-details">
