@@ -12,10 +12,10 @@ exports.processPayment = async (req, res) => {
 
     if (currency === 'USD') convertedAmount = amount * rates.USD;
     else if (currency === 'ILS') convertedAmount = amount * rates.ILS;
-    console.log('Received amount:', amount);
-    console.log('Currency:', currency);
-    console.log('Converted amount:', convertedAmount);
-    
+      console.log('Received amount:', amount);
+      console.log('Currency:', currency);
+      console.log('Converted amount:', convertedAmount);
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(convertedAmount * 100),
       currency: currency.toLowerCase(),
