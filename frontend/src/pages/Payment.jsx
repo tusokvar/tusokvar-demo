@@ -11,12 +11,21 @@ const Payment = () => {
   const location = useLocation();
   const { amount } = location.state || { amount: 0 };
 
-  console.log('Received amount:', amount); // לבדיקה מהירה
+  console.log('Received amount:', amount);
+
+  if (!amount || amount === 0) {
+    return (
+      <div className="payment-container">
+        <h2>שגיאה בסיכום ההזמנה</h2>
+        <p>הסכום לתשלום לא נקבע כראוי.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="payment-container">
       <h2>סיכום הזמנה</h2>
-      <p>{amount ? amount.toFixed(2) : '0.00'} מחיר לתשלום EUR</p>
+      <p>{amount.toFixed(2)} מחיר לתשלום EUR</p>
 
       <Elements stripe={stripePromise}>
         <CheckoutForm amount={amount} />
