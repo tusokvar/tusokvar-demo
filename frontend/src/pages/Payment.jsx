@@ -26,6 +26,11 @@ const Payment = () => {
   const { amount } = location.state || { amount: 0 };
   const [currency, setCurrency] = useState('EUR');
   const [cardType, setCardType] = useState('visa');
+  const [email, setEmail] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCVC, setCardCVC] = useState('');
+  const [postalCode, setPostalCode] = useState('');
   const [idNumber, setIdNumber] = useState('');
 
   if (!amount || amount === 0) {
@@ -68,12 +73,67 @@ const Payment = () => {
         </div>
 
         <div className="detail-group">
+          <label>מספר כרטיס אשראי:</label>
+          <input
+            type="text"
+            value={cardNumber}
+            onChange={(e) => setCardNumber(e.target.value)}
+            placeholder="מספר כרטיס"
+            required
+          />
+        </div>
+
+        <div className="detail-group">
+          <label>תוקף כרטיס (MM/YY):</label>
+          <input
+            type="text"
+            value={cardExpiry}
+            onChange={(e) => setCardExpiry(e.target.value)}
+            placeholder="MM/YY"
+            required
+          />
+        </div>
+
+        <div className="detail-group">
+          <label>3 ספרות בגב הכרטיס (CVC):</label>
+          <input
+            type="text"
+            value={cardCVC}
+            onChange={(e) => setCardCVC(e.target.value)}
+            placeholder="CVC"
+            required
+          />
+        </div>
+
+        <div className="detail-group">
+          <label>מיקוד:</label>
+          <input
+            type="text"
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
+            placeholder="מיקוד"
+            required
+          />
+        </div>
+
+        <div className="detail-group">
           <label>מספר תעודת זהות:</label>
           <input
             type="text"
             value={idNumber}
             onChange={(e) => setIdNumber(e.target.value)}
             placeholder="הזן תעודת זהות"
+            required
+          />
+        </div>
+
+        <div className="detail-group">
+          <label>מייל לקבלת חשבונית:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="הזן כתובת מייל"
             required
           />
         </div>
@@ -84,6 +144,8 @@ const Payment = () => {
           <CheckoutForm amount={amount} currency={currency} cardType={cardType} idNumber={idNumber} />
         </Elements>
       </div>
+
+      <button className="order-btn">הזמן עכשיו</button>
     </div>
   );
 };
