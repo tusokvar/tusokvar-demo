@@ -18,6 +18,7 @@ const cardOptions = [
   { value: 'mastercard', label: 'MasterCard' },
   { value: 'amex', label: 'American Express' },
   { value: 'diners', label: 'Diners Club' },
+  { value: 'debit', label: 'Debit Card' },
 ];
 
 const Payment = () => {
@@ -39,12 +40,13 @@ const Payment = () => {
   return (
     <div className="payment-container">
       <h2>סיכום הזמנה 💳</h2>
-      <div className="summary">
+
+      <div className="summary-box">
         <span className="total-amount">{amount.toFixed(2)} {currency}</span>
       </div>
 
-      <div className="selectors">
-        <div className="selector-group">
+      <div className="payment-details">
+        <div className="detail-group">
           <label>בחר מטבע לתשלום:</label>
           <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
             {currencyOptions.map(({ code, label, flag }) => (
@@ -53,7 +55,7 @@ const Payment = () => {
           </select>
         </div>
 
-        <div className="selector-group">
+        <div className="detail-group">
           <label>בחר סוג כרטיס:</label>
           <select value={cardType} onChange={(e) => setCardType(e.target.value)}>
             {cardOptions.map(({ value, label }) => (
@@ -61,22 +63,24 @@ const Payment = () => {
             ))}
           </select>
         </div>
+
+        <div className="detail-group">
+          <label>מספר תעודת זהות:</label>
+          <input
+            type="text"
+            value={idNumber}
+            onChange={(e) => setIdNumber(e.target.value)}
+            placeholder="הזן תעודת זהות"
+            required
+          />
+        </div>
       </div>
 
-      <div className="id-input">
-        <label>מספר תעודת זהות:</label>
-        <input
-          type="text"
-          value={idNumber}
-          onChange={(e) => setIdNumber(e.target.value)}
-          placeholder="הזן תעודת זהות"
-          required
-        />
+      <div className="checkout-form-container">
+        <Elements stripe={stripePromise}>
+          <CheckoutForm amount={amount} currency={currency} cardType={cardType} idNumber={idNumber} />
+        </Elements>
       </div>
-
-      <Elements stripe={stripePromise}>
-        <CheckoutForm amount={amount} currency={currency} cardType={cardType} idNumber={idNumber} />
-      </Elements>
     </div>
   );
 };
