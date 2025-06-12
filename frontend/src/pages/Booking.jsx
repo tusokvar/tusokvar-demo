@@ -5,6 +5,18 @@ import Select from 'react-select';
 import countries from '../utils/countries';
 import './Booking.css';
 
+const seatOptions = Array.from({ length: 30 }, (_, i) => ({
+  value: `Seat ${i + 1}`,
+  label: `מושב ${i + 1}`,
+}));
+
+const baggageOptions = [
+  { value: 'none', label: 'ללא' },
+  { value: 'trolley', label: 'טרולי (תיק יד)' },
+  { value: 'checked', label: 'מזוודה (כבודה גדולה)' },
+  { value: 'both', label: 'טרולי + מזוודה' },
+];
+
 const Booking = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -16,6 +28,8 @@ const Booking = () => {
     passportCountry: null,
     phone: '',
     email: '',
+    baggageOption: baggageOptions[0],
+    seatSelection: null,
   });
 
   const handleChange = (e) => {
@@ -32,11 +46,30 @@ const Booking = () => {
     });
   };
 
+  const handleBaggageChange = (selectedOption) => {
+    setPassengerDetails({
+      ...passengerDetails,
+      baggageOption: selectedOption,
+    });
+  };
+
+  const handleSeatChange = (selectedOption) => {
+    setPassengerDetails({
+      ...passengerDetails,
+      seatSelection: selectedOption,
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!passengerDetails.passportCountry) {
       alert('אנא בחר מדינה שהנפיקה את הדרכון');
+      return;
+    }
+
+    if (!passengerDetails.seatSelection) {
+      alert('אנא בחר מושב');
       return;
     }
 
@@ -90,10 +123,27 @@ const Booking = () => {
           onChange={handleChange}
         />
 
-        <button type="submit">המשך לתשלום</button>
+        <label style={{ marginTop: '20px' }}>בחר סוג כבודה:</label>
+        <Select
+          options={baggageOptions}
+          defaultValue={baggageOptions[0]}
+          onChange={handleBaggageChange}
+        />
+
+        <label style={{ marginTop: '20px' }}>בחר מושב:</label>
+        <Select
+          options={seatOptions}
+          placeholder="בחר מושב"
+          onChange={handleSeatChange}
+        />
+
+        <button type="submit" style={{ marginTop: '20px' }}>
+          המשך לתשלום
+        </button>
       </form>
     </div>
   );
 };
 
 export default Booking;
+
