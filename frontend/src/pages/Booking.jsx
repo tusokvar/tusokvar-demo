@@ -56,6 +56,17 @@ const Booking = () => {
     navigate('/payment', { state: { ...state, passengerDetails } });
   };
 
+  const selectStyles = {
+    placeholder: (defaultStyles) => ({
+      ...defaultStyles,
+      color: '#888',
+    }),
+    singleValue: (defaultStyles) => ({
+      ...defaultStyles,
+      color: '#333',
+    }),
+  };
+
   return (
     <div className="booking-container">
       <form onSubmit={handleSubmit}>
@@ -87,6 +98,7 @@ const Booking = () => {
           options={countries}
           placeholder="בחר מדינה שהנפיקה את הדרכון"
           onChange={handleSelectChange('passportCountry')}
+          styles={selectStyles}
           required
         />
 
@@ -110,6 +122,7 @@ const Booking = () => {
           options={baggageOptions}
           defaultValue={baggageOptions[0]}
           onChange={handleSelectChange('baggageOption')}
+          styles={selectStyles}
         />
 
         <label className="label-select">בחר מושב:</label>
@@ -117,6 +130,7 @@ const Booking = () => {
           options={seatOptions}
           placeholder="בחר מושב"
           onChange={handleSelectChange('seatSelection')}
+          styles={selectStyles}
         />
 
         <button type="submit" className="submit-btn">
@@ -128,3 +142,4 @@ const Booking = () => {
 };
 
 export default Booking;
+
