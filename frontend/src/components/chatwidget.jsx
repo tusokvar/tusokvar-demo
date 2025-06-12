@@ -1,45 +1,43 @@
+// frontend/src/components/ChatWidget.jsx
 import { useState } from 'react';
 import api from '../utils/api';
 import './chatwidget.css';
 
 const ChatWidget = () => {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const toggleChat = () => setOpen(prev => !prev);
-
   const sendMessage = async () => {
     if (!message.trim()) return;
-    setLoading(true);
 
+    setLoading(true);
     const userMessage = { sender: 'user', text: message };
     setChatHistory(prev => [...prev, userMessage]);
     setMessage('');
 
     try {
-      const res = await api.post('/chat', { prompt: message });
-      const botMessage = { sender: 'bot', text: res.data.reply };
-      setChatHistory(prev => [...prev, botMessage]);
+      const res = await api.post('/chat', { prompt: userMessage.text });
+      setChatHistory(prev => [...prev, { sender: 'bot', text: res.data.reply }]);
     } catch (err) {
-      console.error(err);
       setChatHistory(prev => [...prev, { sender: 'bot', text: 'שגיאה בתקשורת, אנא נסה שוב.' }]);
     }
+
     setLoading(false);
   };
 
   return (
     <div className="chat-widget-container">
-      {open && (
+      {isOpen && (
         <div className="chat-box">
-          <div className="chat-messages">
+          <div className="chat-history">
             {chatHistory.map((msg, idx) => (
-              <div key={idx} className={`chat-message ${msg.sender}`}>
+              <div key={idx} className={`chat-msg ${msg.sender}`}>
                 {msg.text}
               </div>
             ))}
-            {loading && <div className="chat-message bot">מקליד...</div>}
+            {loading && <div className="chat-msg bot">מקליד...</div>}
           </div>
           <div className="chat-input">
             <input
@@ -53,11 +51,12 @@ const ChatWidget = () => {
           </div>
         </div>
       )}
-      <button className="chat-toggle-btn" onClick={toggleChat}>
-        {open ? '✖' : '💬'}
+      <button className="chat-toggle" onClick={() => setIsOpen(prev => !prev)}>
+        💬
       </button>
     </div>
   );
 };
 
 export default ChatWidget;
+
