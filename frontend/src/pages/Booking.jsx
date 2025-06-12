@@ -1,6 +1,8 @@
 // src/pages/Booking.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import Select from 'react-select';
+import countries from '../utils/countries';
 import './Booking.css';
 
 const Booking = () => {
@@ -9,6 +11,9 @@ const Booking = () => {
 
   const [passengerDetails, setPassengerDetails] = useState({
     fullName: '',
+    dateOfBirth: '',
+    passportNumber: '',
+    passportCountry: null,
     phone: '',
     email: '',
   });
@@ -20,8 +25,21 @@ const Booking = () => {
     });
   };
 
+  const handleCountryChange = (selectedOption) => {
+    setPassengerDetails({
+      ...passengerDetails,
+      passportCountry: selectedOption,
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!passengerDetails.passportCountry) {
+      alert('אנא בחר מדינה שהנפיקה את הדרכון');
+      return;
+    }
+
     navigate('/payment', { state: { ...state, passengerDetails } });
   };
 
@@ -30,16 +48,40 @@ const Booking = () => {
       <form onSubmit={handleSubmit}>
         <input
           name="fullName"
-          placeholder="שם מלא באנגלית"
+          placeholder="שם מלא באנגלית (כמו בדרכון)"
           required
           onChange={handleChange}
         />
+
+        <input
+          type="date"
+          name="dateOfBirth"
+          placeholder="תאריך לידה"
+          required
+          onChange={handleChange}
+        />
+
+        <input
+          name="passportNumber"
+          placeholder="מספר דרכון"
+          required
+          onChange={handleChange}
+        />
+
+        <Select
+          options={countries}
+          placeholder="בחר מדינה שהנפיקה את הדרכון"
+          onChange={handleCountryChange}
+          required
+        />
+
         <input
           name="phone"
           placeholder="טלפון"
           required
           onChange={handleChange}
         />
+
         <input
           name="email"
           type="email"
@@ -47,6 +89,7 @@ const Booking = () => {
           required
           onChange={handleChange}
         />
+
         <button type="submit">המשך לתשלום</button>
       </form>
     </div>
