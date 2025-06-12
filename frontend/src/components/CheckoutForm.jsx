@@ -4,7 +4,7 @@ import axios from 'axios';
 import { BACKEND_URI } from '../utils/config';
 import { useNavigate } from 'react-router-dom';
 
-const CheckoutForm = ({ amount }) => {
+const CheckoutForm = ({ amount, currency }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -28,7 +28,6 @@ const CheckoutForm = ({ amount }) => {
     });
 
     if (error) {
-      console.error('Stripe error:', error);
       setErrorMsg(error.message || 'שגיאה בפרטי הכרטיס.');
       setLoading(false);
       return;
@@ -37,18 +36,16 @@ const CheckoutForm = ({ amount }) => {
     try {
       const response = await axios.post(`${BACKEND_URI}/payments`, {
         amount,
+        currency,
         paymentMethodId: paymentMethod.id,
       });
 
       if (response.data.success) {
-        console.log('התשלום בוצע בהצלחה:', response.data.paymentIntent);
         navigate('/payment-success');
       } else {
-        console.error('התשלום נכשל:', response.data.error);
         setErrorMsg(response.data.error || 'התשלום נכשל, אנא נסה שוב.');
       }
     } catch (error) {
-      console.error('Server Error:', error);
       setErrorMsg('שגיאת שרת, אנא נסה מאוחר יותר.');
     }
 
@@ -58,7 +55,7 @@ const CheckoutForm = ({ amount }) => {
   return (
     <form onSubmit={handleSubmit}>
       <CardElement />
-      
+
       {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
 
       <button type="submit" disabled={!stripe || loading}>
