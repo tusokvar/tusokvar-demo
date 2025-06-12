@@ -4,20 +4,9 @@ import api from '../utils/api';
 import './FlightResults.css';
 
 const airportsHebrew = {
-  TLV: 'תל אביב',
-  JFK: 'ניו יורק',
-  CDG: 'פריז',
-  AMS: 'אמסטרדם',
-  FCO: 'רומא',
-  MAD: 'מדריד',
-  BCN: 'ברצלונה',
-  LHR: 'לונדון',
-  ATH: 'אתונה',
-  IST: 'איסטנבול',
-  DXB: 'דובאי',
-  BKK: 'בנגקוק',
-  BER: 'ברלין',
-  VIE: 'וינה',
+  TLV: 'תל אביב', JFK: 'ניו יורק', CDG: 'פריז', AMS: 'אמסטרדם', FCO: 'רומא',
+  MAD: 'מדריד', BCN: 'ברצלונה', LHR: 'לונדון', ATH: 'אתונה', IST: 'איסטנבול',
+  DXB: 'דובאי', BKK: 'בנגקוק', BER: 'ברלין', VIE: 'וינה',
 };
 
 const FlightResults = () => {
@@ -45,46 +34,40 @@ const FlightResults = () => {
 
   return (
     <div className="results-container">
-      <h2>תוצאות חיפוש טיסות</h2>
+      <h2>תוצאות חיפוש טיסות ✈️</h2>
       {flights.map((flight, idx) => (
         <div key={idx} className="flight-card">
           {flight.itineraries.map((itinerary, itineraryIdx) => (
-            <div key={itineraryIdx}>
-              <h3>{itineraryIdx === 0 ? '✈️ הלוך' : '✈️ חזור'}</h3>
+            <div key={itineraryIdx} className="itinerary-section">
+              <h3 className="itinerary-title">
+                {itineraryIdx === 0 ? 'הלוך' : 'חזור'}
+              </h3>
               {itinerary.segments.map((segment, segmentIdx) => (
                 <div key={segmentIdx} className="segment-info">
-                  <p>
-                    🛫 המראה: {airportsHebrew[segment.departure.iataCode] || segment.departure.iataCode} בשעה {segment.departure.at.slice(11, 16)}
-                  </p>
-                  <p>
-                    🛬 נחיתה: {airportsHebrew[segment.arrival.iataCode] || segment.arrival.iataCode} בשעה {segment.arrival.at.slice(11, 16)}
-                  </p>
-                  <p>✈️ חברת תעופה: {segment.carrierCode} | טיסה מס׳ {segment.number}</p>
-                  <p>⏱️ זמן טיסה: {segment.duration.slice(2)}</p>
+                  <p><strong>🛫 המראה:</strong> {airportsHebrew[segment.departure.iataCode] || segment.departure.iataCode} בשעה {segment.departure.at.slice(11, 16)}</p>
+                  <p><strong>🛬 נחיתה:</strong> {airportsHebrew[segment.arrival.iataCode] || segment.arrival.iataCode} בשעה {segment.arrival.at.slice(11, 16)}</p>
+                  <p><strong>✈️ חברה:</strong> {segment.carrierCode} | טיסה מס׳ {segment.number}</p>
+                  <p><strong>⏱️ זמן טיסה:</strong> {segment.duration.slice(2)}</p>
                 </div>
               ))}
             </div>
           ))}
-          <p className="flight-price">
-            מחיר: {flight.price.total} {flight.price.currency}
-          </p>
-          <p className="flight-baggage">
-            🧳 טרולי כלול (8 ק״ג)<br/>
-            🧳 מזוודה גדולה בתוספת תשלום
-          </p>
-          <button
-            className="book-btn"
-            onClick={() =>
-              navigate('/booking', {
-                state: {
-                  flight,
-                  amount: parseFloat(flight.price.total),
-                },
-              })
-            }
-          >
-            הזמן עכשיו
-          </button>
+          <div className="flight-footer">
+            <p className="flight-price">
+              מחיר: {flight.price.total} {flight.price.currency}
+            </p>
+            <p className="flight-baggage">
+              🧳 טרולי כלול (8 ק״ג) | 🧳 מזוודה גדולה בתוספת תשלום
+            </p>
+            <button
+              className="book-btn"
+              onClick={() => navigate('/booking', {
+                state: { flight, amount: parseFloat(flight.price.total) }
+              })}
+            >
+              הזמן עכשיו
+            </button>
+          </div>
         </div>
       ))}
     </div>
