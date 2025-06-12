@@ -5,8 +5,7 @@ exports.processPayment = async (req, res) => {
   const { amount, paymentMethodId, currency } = req.body;
 
   try {
-    // קבלת נתוני המרה בצורה נכונה
-    const exchangeRates = await axios.get('https://api.exchangerate.host/latest?base=EUR&symbols=USD,ILS');
+    const exchangeRates = await axios.get('https://api.exchangeratesapi.io/latest?base=EUR&symbols=USD,ILS');
 
     if (!exchangeRates.data || !exchangeRates.data.rates) {
       throw new Error('Exchange rate API failed');
@@ -47,3 +46,4 @@ exports.processPayment = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
