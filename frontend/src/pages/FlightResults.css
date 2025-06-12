@@ -1,63 +1,85 @@
 .results-container {
-  background-color: #f5f5f5;
-  padding: 40px 20px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.results-container h2 {
-  margin-bottom: 25px;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   color: #333;
+  direction: rtl;
+  font-family: Arial, sans-serif;
 }
 
 .flight-card {
-  width: 100%;
-  max-width: 600px;
-  background-color: #fff;
+  border-radius: 12px;
+  background-color: #ffffff;
   margin-bottom: 20px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  text-align: center;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.flight-card h3 {
-  color: #007bff;
+.flight-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.itinerary-title {
+  font-size: 18px;
   margin-bottom: 10px;
+  color: #0056b3;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 5px;
+}
+
+.segment-info {
+  margin-bottom: 12px;
+  background-color: #f1f3f5;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.segment-info p {
+  margin: 4px 0;
+}
+
+.flight-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 12px;
+  margin-top: 12px;
 }
 
 .flight-price {
   font-size: 18px;
-  color: #333;
   font-weight: bold;
+  color: #007bff;
 }
 
 .flight-baggage {
-  color: #555;
-  margin-top: 10px;
   font-size: 14px;
-  line-height: 1.5;
+  color: #555;
 }
 
 .book-btn {
-  background-color: #ffcc00;
+  padding: 8px 15px;
+  background-color: #28a745;
+  color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
-  margin-top: 15px;
   transition: background-color 0.3s;
 }
 
 .book-btn:hover {
-  background-color: #e6b800;
+  background-color: #218838;
 }
 
 .loading {
-  font-size: 20px;
+  text-align: center;
+  font-size: 18px;
+  padding: 20px;
   color: #555;
-  margin-top: 50px;
 }
