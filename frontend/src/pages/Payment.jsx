@@ -25,6 +25,7 @@ const Payment = () => {
   const { amount } = location.state || { amount: 0 };
   const [currency, setCurrency] = useState('EUR');
   const [cardType, setCardType] = useState('visa');
+  const [idNumber, setIdNumber] = useState('');
 
   if (!amount || amount === 0) {
     return (
@@ -62,11 +63,23 @@ const Payment = () => {
         </div>
       </div>
 
+      <div className="id-input">
+        <label>מספר תעודת זהות:</label>
+        <input
+          type="text"
+          value={idNumber}
+          onChange={(e) => setIdNumber(e.target.value)}
+          placeholder="הזן תעודת זהות"
+          required
+        />
+      </div>
+
       <Elements stripe={stripePromise}>
-        <CheckoutForm amount={amount} currency={currency} cardType={cardType} />
+        <CheckoutForm amount={amount} currency={currency} cardType={cardType} idNumber={idNumber} />
       </Elements>
     </div>
   );
 };
 
 export default Payment;
+
