@@ -59,12 +59,21 @@
 }
 
 /* React-Select Overrides */
-.booking-container .css-1wa3eu0-placeholder {
-  color: #999 !important;
+.booking-container .css-1wa3eu0-placeholder,
+.booking-container .css-1uccc91-singleValue,
+.booking-container .css-qc6sy-singleValue,
+.booking-container .css-1dimb5e-singleValue,
+.booking-container .css-1fdsijx-ValueContainer,
+.booking-container .css-26l3qy-menu,
+.booking-container .css-yt9ioa-option,
+.booking-container .css-tr4s17-option,
+.booking-container .css-1nmdiq5-menu,
+.booking-container .css-1pahdxg-control {
+  color: #333 !important;
 }
 
-.booking-container .css-1dimb5e-singleValue {
-  color: #333 !important;
+.booking-container .css-1jqq78o-placeholder {
+  color: #555 !important;
 }
 
 .booking-container .css-13cymwt-control,
@@ -76,9 +85,5 @@
 }
 
 .booking-container .css-qbdosj-Input input {
-  color: #333 !important;
-}
-
-.booking-container .css-1uccc91-singleValue {
   color: #333 !important;
 }
