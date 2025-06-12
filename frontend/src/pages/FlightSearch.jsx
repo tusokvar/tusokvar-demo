@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../pages/FlightSearch.css';
+import Select from 'react-select';
+import airports from '../utils/airports';
+import './FlightSearch.css';
 
 const FlightSearch = () => {
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
-    from: '',
-    to: '',
+    from: null,
+    to: null,
     departureDate: '',
     returnDate: '',
-    passengers: 1
+    passengers: 1,
   });
+
+  const handleSelectChange = (selectedOption, action) => {
+    setFormData({ ...formData, [action.name]: selectedOption });
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,9 +26,26 @@ const FlightSearch = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.from || !formData.to) {
+      alert('יש לבחור מוצא ויעד מתוך הרשימה בלבד.');
+      return;
+    }
+
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/flights/search`, formData);
-      navigate('/results', { state: { flights: response.data } });
+      const searchParams = {
+        from: formData.from.value,
+        to: formData.to.value,
+        departureDate: formData.departureDate,
+        returnDate: formData.returnDate,
+        passengers: formData.passengers,
+      };
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URI}/api/flights/search`,
+        searchParams
+      );
+
+      navigate('/flight-results', { state: searchParams });
     } catch (error) {
       console.error('Error searching flights:', error);
       alert('אירעה שגיאה בעת החיפוש. נא לנסות שוב.');
@@ -33,46 +56,51 @@ const FlightSearch = () => {
     <div className="flight-search-container">
       <h1>חיפוש טיסות</h1>
       <form onSubmit={handleSubmit} className="flight-form">
-        <input 
-          type="text" 
-          name="from" 
-          placeholder="מוצא" 
-          value={formData.from} 
-          onChange={handleChange} 
+        <label>מוצא:</label>
+        <Select
+          options={airports}
+          placeholder="בחר שדה תעופה מוצא"
+          onChange={handleSelectChange}
+          name="from"
           required
         />
-        <input 
-          type="text" 
-          name="to" 
-          placeholder="יעד" 
-          value={formData.to} 
-          onChange={handleChange} 
+
+        <label>יעד:</label>
+        <Select
+          options={airports}
+          placeholder="בחר שדה תעופה יעד"
+          onChange={handleSelectChange}
+          name="to"
           required
         />
-        <input 
-          type="date" 
-          name="departureDate" 
-          placeholder="תאריך יציאה" 
-          value={formData.departureDate} 
-          onChange={handleChange} 
+
+        <label>תאריך יציאה:</label>
+        <input
+          type="date"
+          name="departureDate"
+          value={formData.departureDate}
+          onChange={handleChange}
           required
         />
-        <input 
-          type="date" 
-          name="returnDate" 
-          placeholder="תאריך חזרה" 
-          value={formData.returnDate} 
+
+        <label>תאריך חזרה (אופציונלי):</label>
+        <input
+          type="date"
+          name="returnDate"
+          value={formData.returnDate}
           onChange={handleChange}
         />
-        <input 
-          type="number" 
-          name="passengers" 
-          placeholder="מספר נוסעים" 
+
+        <label>מספר נוסעים:</label>
+        <input
+          type="number"
+          name="passengers"
           min="1"
-          value={formData.passengers} 
-          onChange={handleChange} 
+          value={formData.passengers}
+          onChange={handleChange}
           required
         />
+
         <button type="submit">חיפוש</button>
       </form>
     </div>
@@ -80,3 +108,4 @@ const FlightSearch = () => {
 };
 
 export default FlightSearch;
+
