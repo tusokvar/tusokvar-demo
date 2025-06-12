@@ -33,11 +33,11 @@ const FlightSearch = () => {
 
     try {
       const searchParams = {
-        from: formData.from.value,
-        to: formData.to.value,
+        originLocationCode: formData.from.value,
+        destinationLocationCode: formData.to.value,
         departureDate: formData.departureDate,
         returnDate: formData.returnDate,
-        passengers: formData.passengers,
+        adults: formData.passengers,
       };
 
       const response = await axios.post(
@@ -54,7 +54,7 @@ const FlightSearch = () => {
 
   return (
     <div className="flight-search-container">
-      <h1>חיפוש טיסות</h1>
+      <h1>חיפוש טיסות ✈️</h1>
       <form onSubmit={handleSubmit} className="flight-form">
         <label>מוצא:</label>
         <Select
@@ -62,6 +62,7 @@ const FlightSearch = () => {
           placeholder="בחר שדה תעופה מוצא"
           onChange={handleSelectChange}
           name="from"
+          isSearchable
           required
         />
 
@@ -71,6 +72,7 @@ const FlightSearch = () => {
           placeholder="בחר שדה תעופה יעד"
           onChange={handleSelectChange}
           name="to"
+          isSearchable
           required
         />
 
@@ -101,12 +103,10 @@ const FlightSearch = () => {
           required
         />
 
-        <button type="submit">חיפוש</button>
+        <button type="submit">חפש טיסות</button>
       </form>
     </div>
   );
 };
 
 export default FlightSearch;
-
-
