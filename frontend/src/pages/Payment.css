@@ -1,137 +1,66 @@
-import React, { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
-import CheckoutForm from '../components/CheckoutForm';
-import { useLocation } from 'react-router-dom';
-import './Payment.css';
+.payment-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  direction: rtl;
+}
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+.summary-box {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f7f9fc;
+  border-radius: 8px;
+  font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+  color: #333;
+}
 
-const currencyOptions = [
-  { code: 'EUR', label: 'יורו (EUR)', flag: '🇪🇺' },
-  { code: 'USD', label: 'דולר אמריקאי (USD)', flag: '🇺🇸' },
-  { code: 'ILS', label: 'שקל ישראלי (ILS)', flag: '🇮🇱' },
-];
+.payment-details, .checkout-form-container {
+  margin-top: 20px;
+}
 
-const cardOptions = [
-  { value: 'visa', label: 'Visa' },
-  { value: 'mastercard', label: 'MasterCard' },
-  { value: 'amex', label: 'American Express' },
-  { value: 'diners', label: 'Diners Club' },
-  { value: 'debit', label: 'Debit Card' },
-];
+.detail-group {
+  margin-bottom: 15px;
+}
 
-const Payment = () => {
-  const location = useLocation();
-  const { amount } = location.state || { amount: 0 };
-  const [currency, setCurrency] = useState('EUR');
-  const [cardType, setCardType] = useState('visa');
-  const [cardCvv, setCardCvv] = useState('');
-  const [zipCode, setZipCode] = useState('');
-  const [idNumber, setIdNumber] = useState('');
-  const [billingEmail, setBillingEmail] = useState('');
+.detail-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #555;
+}
 
-  if (!amount || amount === 0) {
-    return (
-      <div className="payment-container">
-        <h2>שגיאה בסיכום ההזמנה ⚠️</h2>
-        <p>הסכום לתשלום לא נקבע כראוי.</p>
-      </div>
-    );
-  }
+.payment-container form input,
+.payment-container form select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  color: #333;
+  background-color: #fff;
+}
 
-  return (
-    <div className="payment-container">
-      <h2>סיכום הזמנה 💳</h2>
+.checkout-form-container button {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
 
-      <div className="summary-box">
-        <div className="summary-item">
-          <span>סכום לתשלום:</span>
-          <span className="total-amount">{amount.toFixed(2)} {currency}</span>
-        </div>
-      </div>
-
-      <div className="payment-details">
-        <div className="detail-group">
-          <label>בחר מטבע לתשלום:</label>
-          <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
-            {currencyOptions.map(({ code, label, flag }) => (
-              <option key={code} value={code}>{flag} {label}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="detail-group">
-          <label>בחר סוג כרטיס:</label>
-          <select value={cardType} onChange={(e) => setCardType(e.target.value)}>
-            {cardOptions.map(({ value, label }) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="detail-group">
-          <label>מספר כרטיס אשראי (CVV - 3 ספרות בגב הכרטיס):</label>
-          <input
-            type="text"
-            value={cardCvv}
-            onChange={(e) => setCardCvv(e.target.value)}
-            placeholder="הזן CVV"
-            required
-          />
-        </div>
-
-        <div className="detail-group">
-          <label>מיקוד:</label>
-          <input
-            type="text"
-            value={zipCode}
-            onChange={(e) => setZipCode(e.target.value)}
-            placeholder="הזן מיקוד"
-            required
-          />
-        </div>
-
-        <div className="detail-group">
-          <label>מספר תעודת זהות:</label>
-          <input
-            type="text"
-            value={idNumber}
-            onChange={(e) => setIdNumber(e.target.value)}
-            placeholder="הזן תעודת זהות"
-            required
-          />
-        </div>
-
-        <div className="detail-group">
-          <label>מייל לשליחת חשבונית:</label>
-          <input
-            type="email"
-            value={billingEmail}
-            onChange={(e) => setBillingEmail(e.target.value)}
-            placeholder="הזן כתובת מייל"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="checkout-form-container">
-        <Elements stripe={stripePromise}>
-          <CheckoutForm
-            amount={amount}
-            currency={currency}
-            cardType={cardType}
-            idNumber={idNumber}
-            cardCvv={cardCvv}
-            zipCode={zipCode}
-            billingEmail={billingEmail}
-          />
-        </Elements>
-      </div>
-
-      <button type="submit" className="submit-btn">הזמן עכשיו</button>
-    </div>
-  );
-};
-
-export default Payment;
+.checkout-form-container button:hover {
+  background-color: #218838;
+}
