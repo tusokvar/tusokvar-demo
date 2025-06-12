@@ -1,4 +1,3 @@
-// src/pages/Booking.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Select from 'react-select';
@@ -39,37 +38,18 @@ const Booking = () => {
     });
   };
 
-  const handleCountryChange = (selectedOption) => {
+  const handleSelectChange = (field) => (selectedOption) => {
     setPassengerDetails({
       ...passengerDetails,
-      passportCountry: selectedOption,
-    });
-  };
-
-  const handleBaggageChange = (selectedOption) => {
-    setPassengerDetails({
-      ...passengerDetails,
-      baggageOption: selectedOption,
-    });
-  };
-
-  const handleSeatChange = (selectedOption) => {
-    setPassengerDetails({
-      ...passengerDetails,
-      seatSelection: selectedOption,
+      [field]: selectedOption,
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!passengerDetails.passportCountry) {
-      alert('אנא בחר מדינה שהנפיקה את הדרכון');
-      return;
-    }
-
-    if (!passengerDetails.seatSelection) {
-      alert('אנא בחר מושב');
+    if (!passengerDetails.passportCountry || !passengerDetails.seatSelection) {
+      alert('אנא מלא את כל השדות הדרושים');
       return;
     }
 
@@ -86,13 +66,15 @@ const Booking = () => {
           onChange={handleChange}
         />
 
-        <input
-          type="date"
-          name="dateOfBirth"
-          placeholder="תאריך לידה"
-          required
-          onChange={handleChange}
-        />
+        <div className="date-container">
+          <label>תאריך לידה:</label>
+          <input
+            type="date"
+            name="dateOfBirth"
+            required
+            onChange={handleChange}
+          />
+        </div>
 
         <input
           name="passportNumber"
@@ -104,7 +86,7 @@ const Booking = () => {
         <Select
           options={countries}
           placeholder="בחר מדינה שהנפיקה את הדרכון"
-          onChange={handleCountryChange}
+          onChange={handleSelectChange('passportCountry')}
           required
         />
 
@@ -123,21 +105,21 @@ const Booking = () => {
           onChange={handleChange}
         />
 
-        <label style={{ marginTop: '20px' }}>בחר סוג כבודה:</label>
+        <label className="label-select">בחר סוג כבודה:</label>
         <Select
           options={baggageOptions}
           defaultValue={baggageOptions[0]}
-          onChange={handleBaggageChange}
+          onChange={handleSelectChange('baggageOption')}
         />
 
-        <label style={{ marginTop: '20px' }}>בחר מושב:</label>
+        <label className="label-select">בחר מושב:</label>
         <Select
           options={seatOptions}
           placeholder="בחר מושב"
-          onChange={handleSeatChange}
+          onChange={handleSelectChange('seatSelection')}
         />
 
-        <button type="submit" style={{ marginTop: '20px' }}>
+        <button type="submit" className="submit-btn">
           המשך לתשלום
         </button>
       </form>
@@ -146,4 +128,3 @@ const Booking = () => {
 };
 
 export default Booking;
-
