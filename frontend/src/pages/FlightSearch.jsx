@@ -35,6 +35,8 @@ const FlightSearch = () => {
       const searchParams = {
         originLocationCode: formData.from.value,
         destinationLocationCode: formData.to.value,
+        originLabel: formData.from.label,
+        destinationLabel: formData.to.label,
         departureDate: formData.departureDate,
         returnDate: formData.returnDate,
         adults: formData.passengers,
