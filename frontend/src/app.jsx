@@ -13,11 +13,11 @@ const App = () => (
     <ChatWidget />
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/flight-search" element={<FlightSearch />} />
       <Route path="/flight-results" element={<FlightResults />} />
+      <Route path="/booking" element={<Booking />} />
       <Route path="/payment" element={<Payment />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
-      <Route path="/booking" element={<Booking />} />
-      <Route path="/flight-search" element={<FlightSearch />} />
     </Routes>
   </Router>
 );
