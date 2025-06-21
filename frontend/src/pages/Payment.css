@@ -2,57 +2,64 @@
   max-width: 700px;
   margin: 40px auto;
   padding: 30px;
-  background: #ffffff;
+  background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
   direction: rtl;
+  color: #333;
 }
 
 .summary-box {
-  margin-bottom: 20px;
-  padding: 15px;
   background-color: #f7f9fc;
-  border-radius: 8px;
-  font-size: 18px;
-  display: flex;
-  justify-content: space-between;
-  color: #333;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
-.payment-details, .checkout-form-container {
-  margin-top: 20px;
+.payment-details {
+  margin-bottom: 20px;
 }
 
-.detail-group {
+.detail-group,
+.detail-group-inline {
   margin-bottom: 15px;
 }
 
-.detail-group label {
+.detail-group label,
+.detail-group-inline label {
   display: block;
-  margin-bottom: 6px;
-  font-size: 14px;
-  color: #555;
+  margin-bottom: 8px;
+  font-weight: bold;
 }
 
-.payment-container form input,
-.payment-container form select {
+.detail-group input,
+.detail-group select {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
+  padding: 10px;
   border-radius: 8px;
-  font-size: 16px;
+  border: 1px solid #ccc;
   box-sizing: border-box;
-  color: #333;
-  background-color: #fff;
+  font-size: 16px;
 }
 
-.checkout-form-container button {
+.detail-group-inline {
+  display: flex;
+  gap: 10px;
+}
+
+.detail-group-inline div {
+  flex: 1;
+}
+
+.order-btn {
   width: 100%;
   padding: 12px;
   font-size: 18px;
-  background-color: #28a745;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 8px;
@@ -61,6 +68,10 @@
   margin-top: 20px;
 }
 
-.checkout-form-container button:hover {
-  background-color: #218838;
+.order-btn:hover {
+  background-color: #0056b3;
+}
+
+input::placeholder {
+  color: #999;
 }
