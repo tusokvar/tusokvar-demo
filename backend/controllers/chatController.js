@@ -8,7 +8,7 @@ const openai = new OpenAI({
 
 const searchFlights = async (origin, destination, date) => {
   try {
-    const response = await axios.post(;${process.env.BACKEND_URI}/api/flights/search;, {
+    const response = await axios.post(`${process.env.BACKEND_URI}/api/flights/search`, {
       originLocationCode: origin,
       destinationLocationCode: destination,
       departureDate: date,
