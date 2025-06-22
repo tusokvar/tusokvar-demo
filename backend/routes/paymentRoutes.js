@@ -1,9 +1,8 @@
-// backend/routes/paymentRoutes.js
 const express = require('express');
 const router = express.Router();
-const { processPayment } = require('../controllers/paymentController');
-const { protect } = require('../middleware/authMiddleware');
+const { processPayment, getExchangeRate } = require('../controllers/paymentController');
 
 router.post('/', processPayment);
+router.get('/exchange-rate', getExchangeRate);
 
 module.exports = router;
