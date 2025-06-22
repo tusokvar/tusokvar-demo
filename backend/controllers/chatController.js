@@ -10,7 +10,7 @@ const airportCodes = {
 
 const searchFlights = async (origin, destination, date) => {
   try {
-    const response = await axios.post(${process.env.BACKEND_URI}/api/flights/search, {
+    const response = await axios.post(`${process.env.BACKEND_URI}/api/flights/search`, {
       originLocationCode: origin,
       destinationLocationCode: destination,
       departureDate: date,
@@ -44,7 +44,7 @@ exports.getChatResponse = async (req, res) => {
       const originName = match[1].trim();
       const destName = match[2].trim();
       const dateParts = match[3].split(/[-./]/);
-      const formattedDate = ${dateParts[2]}-${dateParts[1]}-${dateParts[0]};
+      const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
 
       const origin = airportCodes[originName];
       const destination = airportCodes[destName];
@@ -57,9 +57,9 @@ exports.getChatResponse = async (req, res) => {
 
       if (flights && flights.length > 0) {
         const flightInfo = flights.slice(0,3).map((flight, idx) => (
-          \n${idx + 1}. טיסה ב-${match[3]}: ${flight.price.total} ${flight.price.currency}
+          `\n${idx + 1}. טיסה ב-${match[3]}: ${flight.price.total} ${flight.price.currency}`
         )).join('');
-        return res.json({ reply: אפשרויות זמינות:${flightInfo} });
+        return res.json({ reply: `אפשרויות זמינות:${flightInfo}` });
       } else {
         return res.json({ reply: 'לא נמצאו טיסות מתאימות.' });
       }
