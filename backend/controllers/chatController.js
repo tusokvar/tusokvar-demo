@@ -148,7 +148,10 @@ exports.getChatResponse = async (req, res) => {
 };
 
     res.json({ reply: completion.choices[0].message.content });
-  } catch (err) {
-    res.status(500).json({ reply: 'שגיאה פנימית, צור קשר עם שירות הלקוחות WhatsApp 0501002003.' });
-  }
-};
+} catch (err) {
+  console.error('Error:', err.message);
+  res.status(500).json({
+    error: 'שגיאה בצ׳אט, אנא נסה שוב.',
+    reply: 'לצערי, אני לא מצליח לעזור כרגע. אנא צור קשר עם שירות הלקוחות שלנו ב-WhatsApp במספר 0501002003 ונשמח לעזור לך בתוך עד 3 שעות.'
+  });
+}
