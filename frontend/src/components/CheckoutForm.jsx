@@ -1,17 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { BACKEND_URI } from '../utils/config';
 import { useNavigate } from 'react-router-dom';
 import './CheckoutForm.css';
 
-const CheckoutForm = ({ amount, currency }) => {
+const CheckoutForm = ({ amount, currency, idNumber, email, postalCode }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [convertedAmount, setConvertedAmount] = useState(amount);
+
+  useEffect(() => {
+    const fetchConversion = async () => {
+      if (currency !== 'EUR') {
+        try {
+          const res = await axios.post(`${BACKEND_URI}/currency/convert`, {
+            amount,
+            fromCurrency: 'EUR',
+            toCurrency: currency,
+          });
+          if (res.data.success) {
+            setConvertedAmount(res.data.convertedAmount);
+          } else {
+            setErrorMsg(res.data.error);
+          }
+        } catch {
+          setErrorMsg('שגיאה בקבלת שערי מטבע.');
+        }
+      } else {
+        setConvertedAmount(amount);
+      }
+    };
+
+    fetchConversion();
+  }, [amount, currency]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -26,6 +52,10 @@ const CheckoutForm = ({ amount, currency }) => {
     const { error, paymentMethod } = await stripe.createPaymentMethod({
       type: 'card',
       card: cardElement,
+      billing_details: {
+        email,
+        address: { postal_code: postalCode },
+      },
     });
 
     if (error) {
@@ -36,9 +66,11 @@ const CheckoutForm = ({ amount, currency }) => {
 
     try {
       const response = await axios.post(`${BACKEND_URI}/payments`, {
-        amount,
+        amount: convertedAmount,
         currency,
         paymentMethodId: paymentMethod.id,
+        idNumber,
+        email,
       });
 
       if (response.data.success) {
