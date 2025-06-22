@@ -5,7 +5,6 @@ import './chatwidget.css';
 const ChatWidget = () => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const [response, setResponse] = useState('');
   const [conversation, setConversation] = useState([]);
 
   const sendMessage = async () => {
@@ -14,7 +13,6 @@ const ChatWidget = () => {
       const res = await api.post('/chat', { prompt: message });
       const newMessage = { user: message, bot: res.data.reply };
       setConversation([...conversation, newMessage]);
-      setResponse(res.data.reply);
       setMessage('');
     } catch (err) {
       console.error(err);
