@@ -5,13 +5,14 @@ exports.processPayment = async (req, res) => {
   const { amount, paymentMethodId, currency } = req.body;
 
   try {
-    const exchangeRates = await axios.get('https://open.er-api.com/v6/latest/EUR');
+    const apiKey = process.env.EXCHANGE_API_KEY;
+    const exchangeRates = await axios.get(`https://v6.exchangerate-api.com/v6/${apiKey}/latest/EUR`);
 
-    if (!exchangeRates.data || !exchangeRates.data.rates) {
+    if (!exchangeRates.data || !exchangeRates.data.conversion_rates) {
       throw new Error('Exchange rate API failed');
     }
 
-    const rates = exchangeRates.data.rates;
+    const rates = exchangeRates.data.conversion_rates;
 
     let convertedAmount = amount;
 
