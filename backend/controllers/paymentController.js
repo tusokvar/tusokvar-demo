@@ -14,19 +14,11 @@ exports.processPayment = async (req, res) => {
 
     const rates = exchangeRates.data.conversion_rates;
 
-    let convertedAmount = amount;
-
-    if (currency === 'USD') {
-      if (!rates.USD) throw new Error('USD rate missing');
-      convertedAmount = amount * rates.USD;
-    } else if (currency === 'ILS') {
-      if (!rates.ILS) throw new Error('ILS rate missing');
-      convertedAmount = amount * rates.ILS;
+    if (!rates[currency]) {
+      throw new Error(`${currency} rate missing`);
     }
 
-    console.log('Original Amount (EUR):', amount);
-    console.log('Currency:', currency);
-    console.log('Converted Amount:', convertedAmount);
+    const convertedAmount = amount * rates[currency];
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(convertedAmount * 100),
@@ -44,6 +36,26 @@ exports.processPayment = async (req, res) => {
 
   } catch (error) {
     console.error('Stripe or Exchange Error:', error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.getExchangeRate = async (req, res) => {
+  const { from, to } = req.query;
+
+  try {
+    const apiKey = process.env.EXCHANGE_API_KEY;
+    const response = await axios.get(`https://v6.exchangerate-api.com/v6/${apiKey}/latest/${from}`);
+
+    if (!response.data || !response.data.conversion_rates || !response.data.conversion_rates[to]) {
+      throw new Error('Exchange rate fetch failed.');
+    }
+
+    const rate = response.data.conversion_rates[to];
+
+    res.json({ success: true, rate });
+  } catch (error) {
+    console.error('Exchange rate fetch error:', error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 };
