@@ -3,6 +3,7 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { BACKEND_URI } from '../utils/config';
 import { useNavigate } from 'react-router-dom';
+import './CheckoutForm.css';
 
 const CheckoutForm = ({ amount, currency }) => {
   const stripe = useStripe();
@@ -53,13 +54,16 @@ const CheckoutForm = ({ amount, currency }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <CardElement />
+    <form className="checkout-form" onSubmit={handleSubmit}>
+      <label className="card-label">פרטי כרטיס אשראי:</label>
+      <div className="card-element-container">
+        <CardElement options={{ style: { base: { fontSize: '16px' } } }} />
+      </div>
 
-      {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
+      {errorMsg && <p className="error-msg">{errorMsg}</p>}
 
-      <button type="submit" disabled={!stripe || loading}>
-        {loading ? 'מבצע תשלום...' : 'שלם עכשיו'}
+      <button className="submit-btn" type="submit" disabled={!stripe || loading}>
+        {loading ? 'מבצע תשלום...' : 'הזמן עכשיו'}
       </button>
     </form>
   );
