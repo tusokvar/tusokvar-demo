@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from '../components/CheckoutForm';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { BACKEND_URI } from '../utils/config';
 import './Payment.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -23,14 +25,40 @@ const cardOptions = [
 
 const Payment = () => {
   const location = useLocation();
-  const { amount } = location.state || { amount: 0 };
+  const originalAmount = location.state?.amount || 0;
   const [currency, setCurrency] = useState('EUR');
+  const [convertedAmount, setConvertedAmount] = useState(originalAmount);
   const [cardType, setCardType] = useState('visa');
   const [postalCode, setPostalCode] = useState('');
   const [idNumber, setIdNumber] = useState('');
   const [email, setEmail] = useState('');
 
-  if (!amount || amount === 0) {
+  useEffect(() => {
+    const fetchConversionRate = async () => {
+      try {
+        if (currency === 'EUR') {
+          setConvertedAmount(originalAmount);
+        } else {
+          const res = await axios.get(`${BACKEND_URI}/payments/exchange-rate`, {
+            params: { from: 'EUR', to: currency },
+          });
+
+          if (res.data.success) {
+            setConvertedAmount(originalAmount * res.data.rate);
+          } else {
+            throw new Error('Exchange rate fetch failed.');
+          }
+        }
+      } catch (error) {
+        console.error('Exchange Error:', error);
+        setConvertedAmount(originalAmount);
+      }
+    };
+
+    fetchConversionRate();
+  }, [currency, originalAmount]);
+
+  if (!originalAmount || originalAmount === 0) {
     return (
       <div className="payment-container">
         <h2>שגיאה בסיכום ההזמנה ⚠</h2>
@@ -46,7 +74,7 @@ const Payment = () => {
       <div className="summary-box">
         <div className="summary-item">
           <span>סכום לתשלום:</span>
-          <span className="total-amount">{amount.toFixed(2)} {currency}</span>
+          <span className="total-amount">{convertedAmount.toFixed(2)} {currency}</span>
         </div>
       </div>
 
@@ -71,41 +99,23 @@ const Payment = () => {
 
         <div className="detail-group">
           <label>מיקוד:</label>
-          <input
-            type="text"
-            value={postalCode}
-            onChange={(e) => setPostalCode(e.target.value)}
-            placeholder="מיקוד"
-            required
-          />
+          <input type="text" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} placeholder="מיקוד" required />
         </div>
 
         <div className="detail-group">
           <label>מספר תעודת זהות:</label>
-          <input
-            type="text"
-            value={idNumber}
-            onChange={(e) => setIdNumber(e.target.value)}
-            placeholder="תעודת זהות"
-            required
-          />
+          <input type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} placeholder="תעודת זהות" required />
         </div>
 
         <div className="detail-group">
           <label>מייל לקבלת חשבונית:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="דוא״ל"
-            required
-          />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="דוא״ל" required />
         </div>
       </div>
 
       <Elements stripe={stripePromise}>
         <CheckoutForm
-          amount={amount}
+          amount={convertedAmount}
           currency={currency}
           cardType={cardType}
           postalCode={postalCode}
