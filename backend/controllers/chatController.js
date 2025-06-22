@@ -2,25 +2,7 @@
 const OpenAI = require('openai');
 const axios = require('axios');
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const searchFlights = async (origin, destination, date) => {
-  try {
-    const response = await axios.post(`${process.env.BACKEND_URI}/api/flights/search`, {
-      originLocationCode: origin,
-      destinationLocationCode: destination,
-      departureDate: date,
-      adults: 1,
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error('Flight search error:', error.message);
-    return null;
-  }
-};
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const airportsCodes = {
   'מדריד': 'MAD',
@@ -78,7 +60,7 @@ const airportsCodes = {
   'ריגה': 'RIX',
   'וילנה': 'VNO',
   'טאלין': 'TLL',
-  // הוסף עוד עד 200 ערים
+  // הוסף עוד ערים לפי הצורך
 };
 
 const parseDate = (dateText) => {
@@ -87,7 +69,23 @@ const parseDate = (dateText) => {
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split('T')[0];
   }
-  return dateText;
+  const dateParts = dateText.split(/[-/.]/);
+  return `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+};
+
+const searchFlights = async (origin, destination, date) => {
+  try {
+    const response = await axios.post(`${process.env.BACKEND_URI}/api/flights/search`, {
+      originLocationCode: origin,
+      destinationLocationCode: destination,
+      departureDate: date,
+      adults: 1,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Flight search error:', error.message);
+    return null;
+  }
 };
 
 exports.getChatResponse = async (req, res) => {
@@ -146,12 +144,3 @@ exports.getChatResponse = async (req, res) => {
     });
   }
 };
-
-    res.json({ reply: completion.choices[0].message.content });
-} catch (err) {
-  console.error('Error:', err.message);
-  res.status(500).json({
-    error: 'שגיאה בצ׳אט, אנא נסה שוב.',
-    reply: 'לצערי, אני לא מצליח לעזור כרגע. אנא צור קשר עם שירות הלקוחות שלנו ב-WhatsApp במספר 0501002003 ונשמח לעזור לך בתוך עד 3 שעות.'
-  });
-}
