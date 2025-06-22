@@ -26,9 +26,6 @@ const Payment = () => {
   const { amount } = location.state || { amount: 0 };
   const [currency, setCurrency] = useState('EUR');
   const [cardType, setCardType] = useState('visa');
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardExpiry, setCardExpiry] = useState('');
-  const [cardCVC, setCardCVC] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [idNumber, setIdNumber] = useState('');
   const [email, setEmail] = useState('');
@@ -36,7 +33,7 @@ const Payment = () => {
   if (!amount || amount === 0) {
     return (
       <div className="payment-container">
-        <h2>שגיאה בסיכום ההזמנה ⚠️</h2>
+        <h2>שגיאה בסיכום ההזמנה ⚠</h2>
         <p>הסכום לתשלום לא נקבע כראוי.</p>
       </div>
     );
@@ -70,40 +67,6 @@ const Payment = () => {
               <option key={value} value={value}>{label}</option>
             ))}
           </select>
-        </div>
-
-        <div className="detail-group">
-          <label>מספר כרטיס אשראי:</label>
-          <input
-            type="text"
-            value={cardNumber}
-            onChange={(e) => setCardNumber(e.target.value)}
-            placeholder="1234 5678 9012 3456"
-            required
-          />
-        </div>
-
-        <div className="detail-group-inline">
-          <div>
-            <label>תוקף כרטיס (MM/YY):</label>
-            <input
-              type="text"
-              value={cardExpiry}
-              onChange={(e) => setCardExpiry(e.target.value)}
-              placeholder="MM/YY"
-              required
-            />
-          </div>
-          <div>
-            <label>3 ספרות בגב הכרטיס (CVC):</label>
-            <input
-              type="text"
-              value={cardCVC}
-              onChange={(e) => setCardCVC(e.target.value)}
-              placeholder="CVC"
-              required
-            />
-          </div>
         </div>
 
         <div className="detail-group">
@@ -145,7 +108,7 @@ const Payment = () => {
           amount={amount}
           currency={currency}
           cardType={cardType}
-          cardDetails={{ cardNumber, cardExpiry, cardCVC, postalCode }}
+          postalCode={postalCode}
           idNumber={idNumber}
           email={email}
         />
@@ -157,4 +120,3 @@ const Payment = () => {
 };
 
 export default Payment;
-
